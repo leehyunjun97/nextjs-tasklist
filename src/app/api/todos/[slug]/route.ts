@@ -1,27 +1,27 @@
+import prisma from '@/app/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
 // 할일 단일 조희
 export async function GET(
   request: NextRequest,
-  // slug <- 폴더 이름이랑 동일 해야됨 ( id, slug )
   { params }: { params: { slug: string } }
 ) {
-  const searchParams = request.nextUrl.searchParams;
+  // const searchParams = request.nextUrl.searchParams;
+  // const query = searchParams.get('query');
 
-  const query = searchParams.get('query');
+  const fetchedTodo = await prisma.todos.findFirst({
+    where: {
+      id: Number(params.slug),
+    },
+  });
 
-  // URL -> `/dashboard?search=my-project`
-  // `search` -> 'my-project'
+  if (fetchedTodo === null) return new Response(null, { status: 204 });
 
   const response = {
     message: '단일 할일 가져오기 성공',
-    data: {
-      id: params.slug,
-      title: '오늘도 빡코딩',
-      is_done: false,
-      query,
-    },
+    data: fetchedTodo,
   };
+
   return NextResponse.json(response, { status: 200 });
 }
 
@@ -30,13 +30,17 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { slug: string } }
 ) {
+  const deleteTodo = await prisma.todos.delete({
+    where: {
+      id: Number(params.slug),
+    },
+  });
+
+  if (deleteTodo === null) return new Response(null, { status: 204 });
+
   const response = {
     message: '단일 할일 삭제 성공',
-    data: {
-      id: params.slug,
-      title: '오늘도 빡코딩',
-      is_done: false,
-    },
+    data: deleteTodo,
   };
   return NextResponse.json(response, { status: 200 });
 }
@@ -48,11 +52,15 @@ export async function POST(
 ) {
   const { title, is_done } = await request.json();
 
-  const editTodo = {
-    id: params.slug,
-    title,
-    is_done,
-  };
+  const editTodo = await prisma.todos.update({
+    where: {
+      id: Number(params.slug),
+    },
+    data: {
+      title,
+      is_done,
+    },
+  });
 
   const response = {
     message: '단일 할일 수정 성공',

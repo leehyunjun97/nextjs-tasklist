@@ -17,11 +17,11 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const { title } = await request.json();
 
-  const newTodo = {
-    id: '10',
-    title,
-    is_done: false,
-  };
+  const newTodo = await prisma.todos.create({
+    data: {
+      title,
+    },
+  });
 
   const response = {
     message: '할일 추가 성공',

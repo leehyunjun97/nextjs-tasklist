@@ -36,7 +36,7 @@ export async function DELETE(
     },
   });
 
-  if (deleteTodo === null) return new Response(null, { status: 204 });
+  if (deleteTodo === undefined) return new Response(null, { status: 204 });
 
   const response = {
     message: '단일 할일 삭제 성공',
@@ -61,6 +61,8 @@ export async function POST(
       is_done,
     },
   });
+
+  if (editTodo === undefined) return new Response(null, { status: 204 });
 
   const response = {
     message: '단일 할일 수정 성공',

@@ -14,11 +14,28 @@ import {
   PopoverContent,
 } from '@nextui-org/react';
 import { Todo } from '@/types/todo';
+import { useRouter } from 'next/navigation';
 
 const TodosTable = ({ todos }: { todos: Todo[] }) => {
   // 할일 추가 가능 여부
   const [todoAddEnable, setTodoAddEnable] = useState(false);
   const [newTodoInput, setNewTodoInput] = useState('');
+  const router = useRouter();
+
+  const addTodoHandler = async (title: string) => {
+    console.log('11');
+    if (newTodoInput.length < 1) {
+      return;
+    }
+    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/todos`, {
+      method: 'post',
+      body: JSON.stringify({
+        title,
+      }),
+      cache: 'no-store',
+    });
+    router.refresh();
+  };
 
   const todoRow = (todo: Todo) => {
     return (
@@ -34,7 +51,14 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
     return (
       <Popover placement='top' showArrow={true}>
         <PopoverTrigger>
-          <Button color='default' className='h-14'>
+          <Button
+            color='default'
+            className='h-14'
+            onPress={async () => {
+              console.log('누름');
+              await addTodoHandler(newTodoInput);
+            }}
+          >
             추가
           </Button>
         </PopoverTrigger>

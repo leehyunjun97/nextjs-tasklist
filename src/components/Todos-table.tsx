@@ -23,7 +23,6 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
   const router = useRouter();
 
   const addTodoHandler = async (title: string) => {
-    console.log('11');
     if (newTodoInput.length < 1) {
       return;
     }
@@ -51,14 +50,7 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
     return (
       <Popover placement='top' showArrow={true}>
         <PopoverTrigger>
-          <Button
-            color='default'
-            className='h-14'
-            onPress={async () => {
-              console.log('누름');
-              await addTodoHandler(newTodoInput);
-            }}
-          >
+          <Button color='default' className='h-14'>
             추가
           </Button>
         </PopoverTrigger>
@@ -85,7 +77,13 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
           }}
         />
         {todoAddEnable ? (
-          <Button color='warning' className='h-14'>
+          <Button
+            color='warning'
+            className='h-14'
+            onPress={async () => {
+              await addTodoHandler(newTodoInput);
+            }}
+          >
             추가
           </Button>
         ) : (

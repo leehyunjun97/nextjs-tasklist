@@ -4,3 +4,10 @@ export type Todo = {
   is_done: boolean;
   created_at: Date;
 };
+
+export type CustomModalType = 'detail' | 'update' | 'delete';
+
+export type FocusedTodoType = {
+  focusedTodo: Todo | null;
+  modalType: CustomModalType;
+};

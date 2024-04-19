@@ -4,7 +4,14 @@ import prisma from '@/app/lib/prisma';
 
 // 모든 할일 가져오기
 export async function GET(request: NextRequest) {
-  const fetchedTodos = await prisma.todos.findMany();
+  const fetchedTodos = await prisma.todos.findMany({
+    // 최신순으로 정렬
+    orderBy: [
+      {
+        created_at: 'desc',
+      },
+    ],
+  });
 
   const response = {
     message: 'todos 가져오기',

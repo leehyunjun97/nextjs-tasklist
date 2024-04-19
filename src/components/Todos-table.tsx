@@ -12,20 +12,27 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
+  Spinner,
 } from '@nextui-org/react';
 import { Todo } from '@/types/todo';
 import { useRouter } from 'next/navigation';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const TodosTable = ({ todos }: { todos: Todo[] }) => {
   // 할일 추가 가능 여부
   const [todoAddEnable, setTodoAddEnable] = useState(false);
+  // 할일 input
   const [newTodoInput, setNewTodoInput] = useState('');
+  // 로딩
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const addTodoHandler = async (title: string) => {
-    if (newTodoInput.length < 1) {
-      return;
-    }
+    if (!todoAddEnable) return;
+    setTodoAddEnable(false);
+    setIsLoading(true);
+    await new Promise((f) => setTimeout(f, 600));
     await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/todos`, {
       method: 'post',
       body: JSON.stringify({
@@ -34,6 +41,9 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
       cache: 'no-store',
     });
     router.refresh();
+    setIsLoading(false);
+    notify('할일이 성공적으로 추가되었습니다!');
+    setNewTodoInput('');
   };
 
   const todoRow = (todo: Todo) => {
@@ -64,14 +74,28 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
     );
   };
 
+  const notify = (message: string) => toast.success(message);
+
   return (
-    <>
+    <div className='flex flex-col space-y-2'>
       <div className='flex w-full flex-wrap md:flex-nowrap gap-4'>
+        <ToastContainer
+          position='top-right'
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme='dark'
+        />
         <Input
           type='text'
           label='새로운 할일'
           value={newTodoInput}
-          onValueChange={(e) => {
+          onValueChange={(e: any) => {
             setNewTodoInput(e);
             setTodoAddEnable(e.length > 0);
           }}
@@ -90,6 +114,9 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
           disableTodoAddButton()
         )}
       </div>
+      <div className='h-6'>
+        {isLoading && <Spinner color='warning' size='sm' />}
+      </div>
       <Table aria-label='Example static collection table'>
         <TableHeader>
           <TableColumn>아이디</TableColumn>
@@ -101,7 +128,7 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
           {todos && todos.map((todo: Todo) => todoRow(todo))}
         </TableBody>
       </Table>
-    </>
+    </div>
   );
 };
 

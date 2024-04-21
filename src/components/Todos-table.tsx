@@ -96,13 +96,22 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
     notify('할일이 성공적으로 삭제되었습니다!');
   };
 
+  const applyIsDoneUI = (is_done: boolean) =>
+    is_done ? 'line-through text-white/50' : '';
+
   const todoRow = (todo: Todo) => {
     return (
       <TableRow key={todo.id}>
-        <TableCell>{todo.id}</TableCell>
-        <TableCell>{todo.title}</TableCell>
-        <TableCell>{todo.is_done ? '완료' : '미완료'}</TableCell>
-        <TableCell>{`${todo.created_at}`}</TableCell>
+        <TableCell className={applyIsDoneUI(todo.is_done)}>{todo.id}</TableCell>
+        <TableCell className={applyIsDoneUI(todo.is_done)}>
+          {todo.title}
+        </TableCell>
+        <TableCell className={applyIsDoneUI(todo.is_done)}>
+          {todo.is_done ? '완료' : '미완료'}
+        </TableCell>
+        <TableCell
+          className={applyIsDoneUI(todo.is_done)}
+        >{`${todo.created_at}`}</TableCell>
         <TableCell>
           {' '}
           <div className='relative flex justify-end items-center gap-2'>

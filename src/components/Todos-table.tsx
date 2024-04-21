@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { Key, useState } from 'react';
 import {
   Table,
   TableHeader,
@@ -64,6 +64,38 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
     setNewTodoInput('');
   };
 
+  const editTodoHandler = async (
+    id: number,
+    editedTitle: string,
+    is_done: boolean
+  ) => {
+    setIsLoading(true);
+    await new Promise((f) => setTimeout(f, 600));
+    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/todos/${id}`, {
+      method: 'post',
+      body: JSON.stringify({
+        title: editedTitle,
+        is_done,
+      }),
+      cache: 'no-store',
+    });
+    router.refresh();
+    setIsLoading(false);
+    notify('할일이 성공적으로 수정되었습니다!');
+  };
+
+  const deleteTodoHandler = async (id: number) => {
+    setIsLoading(true);
+    await new Promise((f) => setTimeout(f, 600));
+    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/todos/${id}`, {
+      method: 'delete',
+      cache: 'no-store',
+    });
+    router.refresh();
+    setIsLoading(false);
+    notify('할일이 성공적으로 삭제되었습니다!');
+  };
+
   const todoRow = (todo: Todo) => {
     return (
       <TableRow key={todo.id}>
@@ -81,7 +113,7 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
-                onAction={(key: string) => {
+                onAction={(key: Key) => {
                   setCurrentModalData({
                     focusedTodo: todo,
                     modalType: key as CustomModalType,
@@ -131,6 +163,14 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
                 focusedTodo={currentModalData.focusedTodo}
                 modalType={currentModalData.modalType}
                 onClose={onClose}
+                onEdit={async (id, title, isDone) => {
+                  await editTodoHandler(id, title, isDone);
+                  onClose();
+                }}
+                onDelete={async (id) => {
+                  await deleteTodoHandler(id);
+                  onClose();
+                }}
               />
             )
           }

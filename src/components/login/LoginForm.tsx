@@ -4,6 +4,7 @@ import { Button, Input } from '@nextui-org/react';
 import React from 'react';
 import { EyeSlashFilledIcon } from '../icon/EyeSlashFilledIcon';
 import { EyeFilledIcon } from '../icon/EyeFilledIcon';
+import Link from 'next/link';
 
 const LoginForm = () => {
   const [isVisible, setIsVisible] = React.useState(false);
@@ -31,7 +32,10 @@ const LoginForm = () => {
           }
           type={isVisible ? 'text' : 'password'}
         />
-        <div className='flex flex-row-reverse'>
+        <div className='flex justify-between'>
+          <p className='text-xs text-gray-400'>
+            <Link href={''}>회원가입</Link>
+          </p>
           <Button color='warning'>로그인</Button>
         </div>
       </div>

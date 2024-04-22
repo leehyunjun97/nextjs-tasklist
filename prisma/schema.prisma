@@ -27,6 +27,13 @@ datasource db {
 //   authorId  Int
 // }
 
+model User {
+  id          Int     @id @default(autoincrement())
+  email       String  @unique
+  name        String
+  password    String
+}
+
 model Todos {
   id          Int   @id @default(autoincrement())
   title       String

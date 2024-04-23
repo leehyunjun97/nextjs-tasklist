@@ -10,5 +10,10 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  return NextResponse.json(check, { status: 200 });
+  const response = {
+    message: '중복확인',
+    data: check,
+  };
+
+  return NextResponse.json(response, { status: 200 });
 }

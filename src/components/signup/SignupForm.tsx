@@ -6,11 +6,13 @@ import { EyeSlashFilledIcon } from '../icon/EyeSlashFilledIcon';
 import { EyeFilledIcon } from '../icon/EyeFilledIcon';
 import { User } from '@/types/user';
 import { signValidation } from '@/utils/checkValidate';
+import Link from 'next/link';
 
 const SignupForm = () => {
   // 패스워드 type 변경 전용
   const [isVisible, setIsVisible] = useState(false);
   const [checkIsLoading, setCheckIsLoading] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
   const [signupState, setSignupState] = useState<User>({
     email: '',
     name: '',
@@ -54,16 +56,36 @@ const SignupForm = () => {
   const signSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setSubmitLoading(true);
+    await new Promise((f) => setTimeout(f, 300));
+
     if (emailCheck) {
       alert('이메일 중복 체크해주세요');
+      setSubmitLoading(false);
       return;
     }
 
     if (emailError || passwordError || nameError) {
       alert('형식에 맞게 입력해주세요');
+      setSubmitLoading(false);
       return;
     }
-    alert('fetch');
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/signup`,
+      {
+        method: 'post',
+        body: JSON.stringify({
+          email: signupState.email,
+          name: signupState.name,
+          password: signupState.password,
+        }),
+      }
+    );
+    const user = await response.json();
+
+    // jwt 로직
+    console.log(user.data);
   };
 
   return (
@@ -136,8 +158,16 @@ const SignupForm = () => {
       <span className='text-red-400' aria-live='polite'>
         {passwordError}
       </span>
-      <div className='flex flex-row-reverse'>
-        <Button type='submit' color='warning'>
+      <div className='flex justify-between'>
+        <p className='text-xs text-gray-400'>
+          <Link href={'/'}>로그인</Link>
+        </p>
+        <Button
+          type='submit'
+          color='warning'
+          isLoading={submitLoading}
+          disabled={submitLoading}
+        >
           회원가입
         </Button>
       </div>

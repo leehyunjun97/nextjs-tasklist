@@ -15,12 +15,12 @@ export async function POST(request: NextRequest) {
   if (user && (await bcrypt.compare(password, user.password))) {
     const { password, ...otherUserInfo } = user;
 
-    const acToken = signAccessToken(otherUserInfo);
-    const reToken = signRefreshToken(otherUserInfo);
+    const accessToken = signAccessToken(otherUserInfo);
+    const refreshToken = signRefreshToken(otherUserInfo);
 
     const response = {
-      message: '로그인 성공',
-      data: { ...otherUserInfo, acToken, reToken },
+      message: '아이디 패스워드 일치',
+      data: { ...otherUserInfo, accessToken, refreshToken },
     };
 
     return NextResponse.json(response, { status: 200 });

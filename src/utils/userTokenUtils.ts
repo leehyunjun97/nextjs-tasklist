@@ -1,10 +1,17 @@
-// import { NextResponse } from 'next/server';
+import { getUserInfo } from '@/services/user/user';
+import { saveTokenLocalStorage } from './localStorage';
 
-// export const handleLoginReponse = async (response: NextResponse) => {
-//   if (response.ok) {
-//     const data = await response.json();
-//     const { acToken, reToken } = data;
+export const handleLoginReponse = async (response: Response) => {
+  try {
+    if (response.ok) {
+      const responseOk = await response.json();
+      const { accessToken, refreshToken } = responseOk.data;
 
-//     saveTokenLocalStorage(acToken, reToken);
-//   }
-// };
+      saveTokenLocalStorage(accessToken, refreshToken);
+
+      return await getUserInfo(accessToken);
+    } else return await response.json();
+  } catch (error) {
+    console.log(error);
+  }
+};

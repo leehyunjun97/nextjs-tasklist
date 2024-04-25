@@ -7,9 +7,12 @@ import { EyeFilledIcon } from '../icon/EyeFilledIcon';
 import Link from 'next/link';
 import { User } from '@/types/user';
 import { inputChangeHandler } from '@/utils/useFormLogic';
-import { verifyJwt } from '@/app/lib/jwt';
+import { handleLoginReponse } from '@/utils/userTokenUtils';
+import { removeTokenLocalStorage } from '@/utils/localStorage';
+import { useRouter } from 'next/navigation';
 
 const LoginForm = () => {
+  const router = useRouter();
   const [isVisible, setIsVisible] = useState(false);
   const [signInState, setSignInState] = useState<User>({
     email: '',
@@ -46,19 +49,15 @@ const LoginForm = () => {
           }),
         }
       );
-      const user = await response.json();
 
-      const { acToken } = user.data;
+      const user = await handleLoginReponse(response);
 
       if (!user) {
         setError('- 아이디 및 비밀번호를 확인해주세요');
+        return;
       }
 
-      const decode = verifyJwt(acToken);
-
-      // jwt 로직
-      console.log('토큰: ', acToken);
-      console.log('디코드: ', decode);
+      router.push('/todos');
     } catch (error) {
       console.log(error);
     } finally {
@@ -119,6 +118,7 @@ const LoginForm = () => {
           >
             로그인
           </Button>
+          <Button onClick={removeTokenLocalStorage}>로컬스토리지삭제</Button>
         </div>
       </form>
     </>

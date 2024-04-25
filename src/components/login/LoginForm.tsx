@@ -7,6 +7,7 @@ import { EyeFilledIcon } from '../icon/EyeFilledIcon';
 import Link from 'next/link';
 import { User } from '@/types/user';
 import { inputChangeHandler } from '@/utils/useFormLogic';
+import { verifyJwt } from '@/app/lib/jwt';
 
 const LoginForm = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -47,12 +48,17 @@ const LoginForm = () => {
       );
       const user = await response.json();
 
+      const { acToken } = user.data;
+
       if (!user) {
         setError('- 아이디 및 비밀번호를 확인해주세요');
       }
 
+      const decode = verifyJwt(acToken);
+
       // jwt 로직
-      console.log(user.data);
+      console.log('토큰: ', acToken);
+      console.log('디코드: ', decode);
     } catch (error) {
       console.log(error);
     } finally {

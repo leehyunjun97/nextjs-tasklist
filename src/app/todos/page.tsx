@@ -2,7 +2,7 @@ import React from 'react';
 import TodosTable from '@/components/Todos-table';
 
 async function fetchTodosApiCall() {
-  console.log('fetchTodosApiCall called');
+  // console.log('fetchTodosApiCall called');
   const res = await fetch(`${process.env.BASE_URL}/api/todos/`, {
     cache: 'no-store',
   });
@@ -13,7 +13,7 @@ async function fetchTodosApiCall() {
 const TodosPage = async () => {
   const response = await fetchTodosApiCall();
 
-  console.log(response.data);
+  // console.log(response.data);
 
   return (
     <div className='flex flex-col space-y-8'>

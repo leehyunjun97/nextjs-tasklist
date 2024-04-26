@@ -1,8 +1,9 @@
 import prisma from '@/app/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import * as bcrypt from 'bcrypt';
-import { signAccessToken, signRefreshToken } from '@/app/lib/jwt';
-import { cookies } from 'next/headers';
+// import { signAccessToken, signRefreshToken } from '@/app/lib/jwt';
+import { setAccessTokenCookie, setRefreshTokenCookie } from '@/app/lib/cookie';
+import { signJWT } from '@/app/lib/jwt';
 
 export async function POST(request: NextRequest) {
   const { email, password } = await request.json();
@@ -16,29 +17,21 @@ export async function POST(request: NextRequest) {
   if (user && (await bcrypt.compare(password, user.password))) {
     const { password, ...otherUserInfo } = user;
 
-    const accessToken = signAccessToken(otherUserInfo);
-    const refreshToken = signRefreshToken(otherUserInfo);
+    // const accessToken = signAccessToken(otherUserInfo);
+    // const refreshToken = signRefreshToken(otherUserInfo);
+
+    // const accessToken = (await signJWT(otherUserInfo)).accessToken;
+    // const refreshToken = await signJWT(otherUserInfo)
+
+    const { accessToken, refreshToken } = await signJWT(otherUserInfo);
 
     // const response = {
     //   message: '아이디 패스워드 일치',
     //   data: { ...otherUserInfo, accessToken, refreshToken },
     // };
 
-    cookies().set({
-      name: 'accessToken',
-      value: accessToken,
-      httpOnly: true,
-      maxAge: 60 * 60,
-      path: '/',
-    });
-
-    cookies().set({
-      name: 'refreshToken',
-      value: refreshToken,
-      httpOnly: true,
-      maxAge: 60 * 60 * 24 * 7,
-      path: '/',
-    });
+    setAccessTokenCookie(accessToken);
+    setRefreshTokenCookie(refreshToken);
 
     const response = {
       message: '아이디 패스워드 일치',

@@ -4,8 +4,6 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
   const accessToken = request.headers.get('Authorization');
 
-  // console.log('토큰있니', accessToken);
-
   if (!accessToken || !verifyJwt(accessToken.split(' ')[1])) {
     return NextResponse.json('No Authorization', { status: 401 });
   }

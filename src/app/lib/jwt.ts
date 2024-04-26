@@ -1,14 +1,14 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
-const DEFAULT_ACCESS_OPTION = {
+export const DEFAULT_ACCESS_OPTION = {
   expiresIn: '1h',
 };
 
-const DEFAULT_REFRESH_OPTION = {
+export const DEFAULT_REFRESH_OPTION = {
   expiresIn: '7d',
 };
 
-const secret_key = process.env.SECRET_KEY;
+export const secret_key = process.env.SECRET_KEY;
 
 export const signAccessToken = (
   payload: JwtPayload,

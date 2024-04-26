@@ -50,14 +50,17 @@ const LoginForm = () => {
         }
       );
 
-      const user = await handleLoginReponse(response);
+      // const user = await handleLoginReponse(response);
+      const user = await response.json();
+
+      console.log(user);
 
       if (!user) {
         setError('- 아이디 및 비밀번호를 확인해주세요');
         return;
       }
 
-      router.push('/todos');
+      router.push('/test');
     } catch (error) {
       console.log(error);
     } finally {

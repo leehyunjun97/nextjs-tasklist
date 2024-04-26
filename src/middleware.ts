@@ -3,9 +3,14 @@ import { getUserInfo } from './services/user/user';
 import { signJWT } from './app/lib/jwt';
 
 export async function middleware(request: NextRequest) {
-  // if (request.nextUrl.pathname.startsWith('/about')) {
-  //   return NextResponse.rewrite(new URL('/about-2', request.url));
-  // }
+  // 액세스 토큰이 있을 시 홈으로 못가게
+  if (request.nextUrl.pathname === '/') {
+    let accessToken = request.cookies.get('accessToken');
+    if (accessToken)
+      return NextResponse.redirect(new URL('/todos', request.url));
+  }
+
+  console.log(request.nextUrl.pathname);
 
   let accessToken = request.cookies.get('accessToken');
 
@@ -28,11 +33,8 @@ export async function middleware(request: NextRequest) {
     });
     return response;
   }
-
-  // const user = await getUserInfo(accessToken.value);
-  return NextResponse.redirect(new URL('/todos', request.url));
 }
 
 export const config = {
-  matcher: ['/todos/:path*'],
+  matcher: ['/todos/:path*', '/'],
 };

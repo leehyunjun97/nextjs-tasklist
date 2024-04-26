@@ -7,8 +7,6 @@ import { EyeFilledIcon } from '../icon/EyeFilledIcon';
 import Link from 'next/link';
 import { User } from '@/types/user';
 import { inputChangeHandler } from '@/utils/useFormLogic';
-import { handleLoginReponse } from '@/utils/userTokenUtils';
-import { removeTokenLocalStorage } from '@/utils/localStorage';
 import { useRouter } from 'next/navigation';
 
 const LoginForm = () => {
@@ -50,7 +48,6 @@ const LoginForm = () => {
         }
       );
 
-      // const user = await handleLoginReponse(response);
       const user = await response.json();
 
       if (!user) {
@@ -58,7 +55,7 @@ const LoginForm = () => {
         return;
       }
 
-      router.push('/test');
+      router.push('/todos');
     } catch (error) {
       console.log(error);
     } finally {
@@ -119,7 +116,6 @@ const LoginForm = () => {
           >
             로그인
           </Button>
-          <Button onClick={removeTokenLocalStorage}>로컬스토리지삭제</Button>
         </div>
       </form>
     </>

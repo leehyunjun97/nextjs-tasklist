@@ -7,6 +7,7 @@ import { EyeFilledIcon } from '../icon/EyeFilledIcon';
 import { User } from '@/types/user';
 import { signValidation } from '@/utils/checkValidate';
 import Link from 'next/link';
+import { emailCheckService } from '@/services/user/user';
 
 const SignupForm = () => {
   // 패스워드 type 변경 전용
@@ -31,18 +32,20 @@ const SignupForm = () => {
 
     setCheckIsLoading(true);
     await new Promise((f) => setTimeout(f, 300));
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/signup/emailCheck`,
-      {
-        method: 'post',
-        body: JSON.stringify({
-          email: signupState.email,
-        }),
-        cache: 'no-store',
-      }
-    );
+    // const response = await fetch(
+    //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/signup/emailCheck`,
+    //   {
+    //     method: 'post',
+    //     body: JSON.stringify({
+    //       email: signupState.email,
+    //     }),
+    //     cache: 'no-store',
+    //   }
+    // );
+
     setCheckIsLoading(false);
-    const check = await response.json();
+    // const check = await response.json();
+    const check = await emailCheckService(signupState.email);
 
     if (check.data) {
       setEmailCheck(true);

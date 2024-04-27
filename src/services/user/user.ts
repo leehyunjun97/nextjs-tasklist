@@ -17,3 +17,24 @@ export const getUserInfo = async (accessToken: string) => {
     console.log(error);
   }
 };
+
+export const emailCheckService = async (email: string) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/signup/emailCheck`,
+      {
+        method: 'post',
+        body: JSON.stringify({
+          email,
+        }),
+        cache: 'no-store',
+      }
+    );
+
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};

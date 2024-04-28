@@ -1,5 +1,6 @@
 // import jwt, { JwtPayload } from 'jsonwebtoken';
 
+import { User } from '@/types/user';
 import jwt, { SignJWT, jwtVerify } from 'jose';
 
 // export const DEFAULT_ACCESS_OPTION = {
@@ -43,7 +44,7 @@ export const issuer = process.env.JWT_ISSUER;
 export const audience = process.env.JWT_AUDIENCE;
 export const secret_key = process.env.SECRET_KEY;
 
-export const signJWT = async (payload: object) => {
+export const signJWT = async (payload: Object) => {
   // 현재 시간을 나타냄
   const iat = Math.floor(Date.now() / 1000);
   const accessExp = iat + DEFAULT_ACCESS_OPTION;

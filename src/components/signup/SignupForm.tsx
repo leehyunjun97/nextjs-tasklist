@@ -32,20 +32,8 @@ const SignupForm = () => {
 
     setCheckIsLoading(true);
     await new Promise((f) => setTimeout(f, 300));
-    // const response = await fetch(
-    //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/signup/emailCheck`,
-    //   {
-    //     method: 'post',
-    //     body: JSON.stringify({
-    //       email: signupState.email,
-    //     }),
-    //     cache: 'no-store',
-    //   }
-    // );
-
-    setCheckIsLoading(false);
-    // const check = await response.json();
     const check = await emailCheckService(signupState.email);
+    setCheckIsLoading(false);
 
     if (check.data) {
       setEmailCheck(true);

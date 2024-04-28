@@ -1,3 +1,5 @@
+import { User } from '@/types/user';
+
 export const getUserInfo = async (accessToken: string) => {
   try {
     const response = await fetch(
@@ -12,7 +14,7 @@ export const getUserInfo = async (accessToken: string) => {
 
     const data = await response.json();
 
-    return data.data;
+    return data.data as User;
   } catch (error) {
     console.log(error);
   }

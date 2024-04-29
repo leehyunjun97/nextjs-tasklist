@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserInfo } from './services/user/user';
 import { signJWT } from './app/lib/jwt';
-import { checkToken, errorTokenHandler } from './app/lib/token';
+import {
+  checkToken,
+  errorTokenHandler,
+  getNewAccessToken,
+} from './app/lib/token';
 
 export async function middleware(request: NextRequest) {
   let accessToken = request.cookies.get('accessToken');
@@ -29,22 +33,11 @@ export async function middleware(request: NextRequest) {
       if (!checkUser) return errorTokenHandler(response, request.url);
 
       // 재발급
-      // const user = await getUserInfo(refreshToken.value);
-
-      // if (!user) return NextResponse.redirect(new URL('/', request.url));
-
-      // const newAccessToken = (await signJWT(user)).accessToken;
-
-      // const response = NextResponse.redirect(new URL('/todos', request.url));
-      // response.cookies.set('accessToken', newAccessToken, {
-      //   httpOnly: true,
-      //   maxAge: 60 * 60,
-      //   path: '/',
-      // });
-      // return response;
+      return getNewAccessToken(checkUser, response);
     }
 
-    // checkToken(accessToken.value);
+    const checkUser = await checkToken(accessToken.value);
+    if (!checkUser) return errorTokenHandler(response, request.url);
   }
 
   // 액세스 토큰이 없을 시 (혹은 만료가 되었을 시)

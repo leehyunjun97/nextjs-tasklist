@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserInfo } from './services/user/user';
-import { signJWT } from './app/lib/jwt';
 import {
   checkToken,
   errorTokenHandler,
@@ -10,17 +8,20 @@ import {
 export async function middleware(request: NextRequest) {
   let accessToken = request.cookies.get('accessToken');
   let refreshToken = request.cookies.get('refreshToken');
-
   let path = request.nextUrl.pathname;
+  let response = NextResponse.redirect(request.url);
 
   // 액세스 토큰이 있을 시 홈으로 못가게
   if (path === '/' || path === '/signup') {
-    if (accessToken)
+    if (accessToken) {
+      const checkUser = await checkToken(accessToken.value);
+      if (!checkUser) return errorTokenHandler(response, request.url);
       return NextResponse.redirect(new URL('/todos', request.url));
+    }
   }
 
   if (path === '/todos') {
-    let response = NextResponse.redirect(request.url);
+    // 액세스 토큰이 없을 시 ( 혹은 만료 )
     if (!accessToken) {
       // 리프레시 토큰도 없을 시 로그인(홈)으로 리다이렉팅
       if (!refreshToken)
@@ -36,11 +37,10 @@ export async function middleware(request: NextRequest) {
       return getNewAccessToken(checkUser, response);
     }
 
+    // 액세스 토큰이 비정상 일 시
     const checkUser = await checkToken(accessToken.value);
     if (!checkUser) return errorTokenHandler(response, request.url);
   }
-
-  // 액세스 토큰이 없을 시 (혹은 만료가 되었을 시)
 }
 
 export const config = {

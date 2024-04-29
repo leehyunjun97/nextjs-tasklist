@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserInfo } from './services/user/user';
 import { signJWT } from './app/lib/jwt';
-import { checkToken } from './app/lib/token';
+import { checkToken, errorTokenHandler } from './app/lib/token';
 
 export async function middleware(request: NextRequest) {
   let accessToken = request.cookies.get('accessToken');
@@ -16,31 +16,35 @@ export async function middleware(request: NextRequest) {
   }
 
   if (path === '/todos') {
+    let response = NextResponse.redirect(request.url);
     if (!accessToken) {
       // 리프레시 토큰도 없을 시 로그인(홈)으로 리다이렉팅
       if (!refreshToken)
         return NextResponse.redirect(new URL('/', request.url));
 
       // 정상 리프레시 토큰인지 확인
-      const check = await checkToken(refreshToken.value);
+      const checkUser = await checkToken(refreshToken.value);
+
+      // 비정상 유저 튕겨내기
+      if (!checkUser) return errorTokenHandler(response, request.url);
 
       // 재발급
-      const user = await getUserInfo(refreshToken.value);
+      // const user = await getUserInfo(refreshToken.value);
 
-      if (!user) return NextResponse.redirect(new URL('/', request.url));
+      // if (!user) return NextResponse.redirect(new URL('/', request.url));
 
-      const newAccessToken = (await signJWT(user)).accessToken;
+      // const newAccessToken = (await signJWT(user)).accessToken;
 
-      const response = NextResponse.redirect(new URL('/todos', request.url));
-      response.cookies.set('accessToken', newAccessToken, {
-        httpOnly: true,
-        maxAge: 60 * 60,
-        path: '/',
-      });
-      return response;
+      // const response = NextResponse.redirect(new URL('/todos', request.url));
+      // response.cookies.set('accessToken', newAccessToken, {
+      //   httpOnly: true,
+      //   maxAge: 60 * 60,
+      //   path: '/',
+      // });
+      // return response;
     }
 
-    checkToken(accessToken.value);
+    // checkToken(accessToken.value);
   }
 
   // 액세스 토큰이 없을 시 (혹은 만료가 되었을 시)

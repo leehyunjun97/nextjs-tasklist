@@ -1,9 +1,14 @@
 import React from 'react';
 import TodosTable from '@/components/Todos-table';
+import { getAccessToken } from '../lib/cookie';
 
 async function fetchTodosApiCall() {
-  // console.log('fetchTodosApiCall called');
+  const accessToken = getAccessToken();
   const res = await fetch(`${process.env.BASE_URL}/api/todos/`, {
+    method: 'get',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
     cache: 'no-store',
   });
 
@@ -12,9 +17,6 @@ async function fetchTodosApiCall() {
 
 const TodosPage = async () => {
   const response = await fetchTodosApiCall();
-
-  // console.log(response.data);
-
   return (
     <div className='flex flex-col space-y-8'>
       <h1 className='text-3xl'>Todos</h1>

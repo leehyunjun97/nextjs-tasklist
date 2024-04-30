@@ -1,7 +1,6 @@
 import prisma from '@/app/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import * as bcrypt from 'bcrypt';
-// import { signAccessToken, signRefreshToken } from '@/app/lib/jwt';
 import { setAccessTokenCookie, setRefreshTokenCookie } from '@/app/lib/cookie';
 import { signJWT } from '@/app/lib/jwt';
 
@@ -17,18 +16,7 @@ export async function POST(request: NextRequest) {
   if (user && (await bcrypt.compare(password, user.password))) {
     const { password, ...otherUserInfo } = user;
 
-    // const accessToken = signAccessToken(otherUserInfo);
-    // const refreshToken = signRefreshToken(otherUserInfo);
-
-    // const accessToken = (await signJWT(otherUserInfo)).accessToken;
-    // const refreshToken = await signJWT(otherUserInfo)
-
     const { accessToken, refreshToken } = await signJWT(otherUserInfo);
-
-    // const response = {
-    //   message: '아이디 패스워드 일치',
-    //   data: { ...otherUserInfo, accessToken, refreshToken },
-    // };
 
     setAccessTokenCookie(accessToken);
     setRefreshTokenCookie(refreshToken);

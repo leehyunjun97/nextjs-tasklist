@@ -19,3 +19,9 @@ export const setRefreshTokenCookie = (refreshToken: string) => {
     path: '/',
   });
 };
+
+export const getAccessToken = () => {
+  const cookieStore = cookies();
+  const accessToken = cookieStore.get('accessToken')!.value;
+  return accessToken;
+};

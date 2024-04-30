@@ -29,7 +29,7 @@ const LoginForm = () => {
 
     if (
       !!!signInState.email.trim().length ||
-      !!!signInState.password.trim().length
+      !!!signInState.password!.trim().length
     ) {
       setError('- 아이디 및 비밀번호를 확인해주세요');
       setSubmitLoading(false);

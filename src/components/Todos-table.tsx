@@ -27,8 +27,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { VerticalDotsIcon } from './VerticalDotsIcon';
 import CustomModal from './CustomModal';
+import { User } from '@/types/user';
 
-const TodosTable = ({ todos }: { todos: Todo[] }) => {
+const TodosTable = ({ todos, user }: { todos: Todo[]; user: User }) => {
   // 할일 추가 가능 여부
   const [todoAddEnable, setTodoAddEnable] = useState(false);
   // 할일 input
@@ -52,6 +53,7 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
       method: 'post',
       body: JSON.stringify({
         title,
+        user,
       }),
       cache: 'no-store',
     });

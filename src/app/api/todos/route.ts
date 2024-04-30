@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/app/lib/prisma';
 import { verifyJwt } from '@/app/lib/jwt';
+import { User } from '@/types/user';
 
 // 모든 할일 가져오기
 export async function GET(request: NextRequest) {
@@ -27,18 +28,18 @@ export async function GET(request: NextRequest) {
     ],
   });
 
-  console.log('todolist: ', fetchedTodos);
-
   const response = {
     message: 'todos 가져오기',
-    data: fetchedTodos,
+    data: { fetchedTodos, userInfo },
   };
   return NextResponse.json(response, { status: 200 });
 }
 
 // 할일 추가
 export async function POST(request: NextRequest) {
-  const { title, user } = await request.json();
+  const { title, user }: { title: string; user: User } = await request.json();
+
+  if (!user) return;
 
   if (title === undefined) {
     const errMessage = {
@@ -50,8 +51,11 @@ export async function POST(request: NextRequest) {
   const newTodo = await prisma.todos.create({
     data: {
       title,
-      author: user,
-      authorId: user.id,
+      author: {
+        connect: {
+          id: user.id,
+        },
+      },
     },
   });
 

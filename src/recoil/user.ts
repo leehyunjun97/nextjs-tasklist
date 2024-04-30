@@ -4,7 +4,7 @@ import { atom } from 'recoil';
 
 // const [cookies, setCookie, removeCookie] = useCookies(['accessToken']);
 
-const userInfoAtom = atom<User>({
+export const userInfoAtom = atom<User>({
   key: 'userInfoAtom',
   default: {
     email: '',

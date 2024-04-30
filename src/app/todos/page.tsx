@@ -1,6 +1,8 @@
 import React from 'react';
 import TodosTable from '@/components/Todos-table';
 import { getAccessToken } from '../lib/cookie';
+import { useSetRecoilState } from 'recoil';
+import { userInfoAtom } from '@/recoil/user';
 
 async function fetchTodosApiCall() {
   const accessToken = getAccessToken();
@@ -17,10 +19,14 @@ async function fetchTodosApiCall() {
 
 const TodosPage = async () => {
   const response = await fetchTodosApiCall();
+
   return (
     <div className='flex flex-col space-y-8'>
       <h1 className='text-3xl'>Todos</h1>
-      <TodosTable todos={response.data ?? []} />
+      <TodosTable
+        todos={response.data.fetchedTodos ?? []}
+        user={response.data.userInfo ?? {}}
+      />
     </div>
   );
 };

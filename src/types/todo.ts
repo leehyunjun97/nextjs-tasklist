@@ -5,7 +5,10 @@ export type Todo = {
   title: string;
   is_done: boolean;
   created_at: Date;
-  author: User;
+  author: {
+    email: string;
+    name: string;
+  };
   authorId: number;
 };
 

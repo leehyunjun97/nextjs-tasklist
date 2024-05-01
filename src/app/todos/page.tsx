@@ -1,8 +1,6 @@
 import React from 'react';
 import TodosTable from '@/components/Todos-table';
 import { getAccessToken } from '../lib/cookie';
-import { useSetRecoilState } from 'recoil';
-import { userInfoAtom } from '@/recoil/user';
 
 async function fetchTodosApiCall() {
   const accessToken = getAccessToken();

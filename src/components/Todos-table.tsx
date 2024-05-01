@@ -95,6 +95,11 @@ const TodosTable = ({ todos, user }: { todos: Todo[]; user: User }) => {
     notify('할일이 성공적으로 삭제되었습니다!');
   };
 
+  const logoutHandler = async () => {
+    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/logout`);
+    router.push('/');
+  };
+
   const applyIsDoneUI = (is_done: boolean) =>
     is_done ? 'line-through text-white/50' : '';
 
@@ -188,7 +193,7 @@ const TodosTable = ({ todos, user }: { todos: Todo[]; user: User }) => {
   };
 
   return (
-    <div className='flex flex-col space-y-2'>
+    <div className='flex flex-col space-y-2 relative'>
       {ModalComponent()}
       <div className='flex w-full flex-wrap md:flex-nowrap gap-4'>
         <ToastContainer
@@ -241,6 +246,15 @@ const TodosTable = ({ todos, user }: { todos: Todo[]; user: User }) => {
           {todos && todos.map((todo: Todo) => todoRow(todo))}
         </TableBody>
       </Table>
+      <div className='h-8'>
+        <Button
+          onClick={logoutHandler}
+          className='absolute right-1 mt-2'
+          size='sm'
+        >
+          로그아웃
+        </Button>
+      </div>
     </div>
   );
 };

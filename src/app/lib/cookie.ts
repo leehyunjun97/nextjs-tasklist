@@ -25,3 +25,8 @@ export const getAccessToken = () => {
   const accessToken = cookieStore.get('accessToken')!.value;
   return accessToken;
 };
+
+export const deleteTokens = () => {
+  cookies().delete('accessToken');
+  cookies().delete('refreshToken');
+};

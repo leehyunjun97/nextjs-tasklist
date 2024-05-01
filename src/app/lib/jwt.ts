@@ -61,6 +61,7 @@ export const signJWT = async (payload: User) => {
     .setNotBefore(iat)
     .setIssuer(issuer!)
     .setAudience(audience!)
+
     // 토큰 서명 시크릿키 사용 인코딩
     .sign(new TextEncoder().encode(secret_key));
 
@@ -89,10 +90,3 @@ export const verifyJwt = async (token: string) => {
     return null;
   }
 };
-
-// function convertJWTPayloadToUser(jwtPayload: JWTPayload): User | null {
-//   const { id, email, name, exp, iat, nbf, iss, aud } = jwtPayload;
-//   const user = { id, email, name, exp, iat, nbf, iss, aud };
-
-//   return null;
-// }

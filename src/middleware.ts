@@ -13,10 +13,19 @@ export async function middleware(request: NextRequest) {
 
   // 액세스 토큰이 있을 시 홈으로 못가게
   if (path === '/' || path === '/signup') {
+    // 토큰 유무 확인 함수를...
+
     if (accessToken) {
       const checkUser = await checkToken(accessToken.value);
       if (!checkUser) return errorTokenHandler(response, request.url);
       return NextResponse.redirect(new URL('/todos', request.url));
+    }
+
+    if (refreshToken) {
+      const checkUser = await checkToken(refreshToken.value);
+      if (!checkUser) return errorTokenHandler(response, request.url);
+      response = NextResponse.redirect(new URL('/todos', request.url));
+      return getNewAccessToken(checkUser, response);
     }
   }
 

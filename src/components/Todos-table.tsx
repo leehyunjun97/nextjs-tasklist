@@ -28,6 +28,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { VerticalDotsIcon } from './VerticalDotsIcon';
 import CustomModal from './CustomModal';
 import { User } from '@/types/user';
+import { addTodoApi, deleteTodoApi, editTodoApi } from '@/services/todo/todo';
+import { logoutApiCall } from '@/services/user/user';
 
 const TodosTable = ({ todos, user }: { todos: Todo[]; user: User }) => {
   // 할일 추가 가능 여부
@@ -48,19 +50,17 @@ const TodosTable = ({ todos, user }: { todos: Todo[]; user: User }) => {
     if (!todoAddEnable) return;
     setTodoAddEnable(false);
     setIsLoading(true);
-    await new Promise((f) => setTimeout(f, 600));
-    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/todos`, {
-      method: 'post',
-      body: JSON.stringify({
-        title,
-        user,
-      }),
-      cache: 'no-store',
-    });
-    router.refresh();
-    setIsLoading(false);
-    notify('할일이 성공적으로 추가되었습니다!');
-    setNewTodoInput('');
+    try {
+      await addTodoApi(title, user);
+      notify('할일이 성공적으로 추가되었습니다!');
+    } catch (error) {
+      console.log(error);
+      notify('추가를 실패하였습니다.');
+    } finally {
+      router.refresh();
+      setIsLoading(false);
+      setNewTodoInput('');
+    }
   };
 
   const editTodoHandler = async (
@@ -69,35 +69,39 @@ const TodosTable = ({ todos, user }: { todos: Todo[]; user: User }) => {
     is_done: boolean
   ) => {
     setIsLoading(true);
-    await new Promise((f) => setTimeout(f, 600));
-    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/todos/${id}`, {
-      method: 'post',
-      body: JSON.stringify({
-        title: editedTitle,
-        is_done,
-      }),
-      cache: 'no-store',
-    });
-    router.refresh();
-    setIsLoading(false);
-    notify('할일이 성공적으로 수정되었습니다!');
+    try {
+      await editTodoApi(id, editedTitle, is_done);
+      notify('할일이 성공적으로 수정되었습니다!');
+    } catch (error) {
+      console.log(error);
+      notify('수정을 실패하였습니다.');
+    } finally {
+      router.refresh();
+      setIsLoading(false);
+    }
   };
 
   const deleteTodoHandler = async (id: number) => {
     setIsLoading(true);
-    await new Promise((f) => setTimeout(f, 600));
-    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/todos/${id}`, {
-      method: 'delete',
-      cache: 'no-store',
-    });
-    router.refresh();
-    setIsLoading(false);
-    notify('할일이 성공적으로 삭제되었습니다!');
+    try {
+      await deleteTodoApi(id);
+      notify('할일이 성공적으로 삭제되었습니다!');
+    } catch (error) {
+      console.log(error);
+      notify('삭제를 실패하였습니다.');
+    } finally {
+      router.refresh();
+      setIsLoading(false);
+    }
   };
 
   const logoutHandler = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/logout`);
-    router.push('/');
+    try {
+      await logoutApiCall();
+      router.push('/');
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const applyIsDoneUI = (is_done: boolean) =>

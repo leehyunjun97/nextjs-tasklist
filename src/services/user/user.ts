@@ -1,6 +1,6 @@
 import { User } from '@/types/user';
 
-export const getUserInfo = async (accessToken: string) => {
+export const fetchUserInfoApi = async (accessToken: string) => {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/`,
@@ -20,7 +20,7 @@ export const getUserInfo = async (accessToken: string) => {
   }
 };
 
-export const emailCheckService = async (email: string) => {
+export const emailCheckApi = async (email: string) => {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/signup/emailCheck`,
@@ -36,6 +36,14 @@ export const emailCheckService = async (email: string) => {
     const data = await response.json();
 
     return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const logoutApiCall = async () => {
+  try {
+    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/logout`);
   } catch (error) {
     console.log(error);
   }

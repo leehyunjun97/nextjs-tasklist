@@ -1,22 +1,11 @@
 import React from 'react';
 import TodosTable from '@/components/Todos-table';
+import { fetchTodosApiCall } from '@/services/todo/todo';
 import { getAccessToken } from '../lib/cookie';
 
-async function fetchTodosApiCall() {
-  const accessToken = getAccessToken();
-  const res = await fetch(`${process.env.BASE_URL}/api/todos/`, {
-    method: 'get',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-    cache: 'no-store',
-  });
-
-  return res.json();
-}
-
 const TodosPage = async () => {
-  const response = await fetchTodosApiCall();
+  const accessToken = getAccessToken();
+  const response = await fetchTodosApiCall(accessToken);
 
   return (
     <div className='flex flex-col space-y-8'>

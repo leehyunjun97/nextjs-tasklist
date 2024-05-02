@@ -1,11 +1,11 @@
-import { getUserInfo } from '@/services/user/user';
+import { fetchUserInfoApi } from '@/services/user/user';
 import { User } from '@/types/user';
 import { NextResponse } from 'next/server';
 import { signJWT } from './jwt';
 
 // 토큰 정상 확인 체크 함수
 export const checkToken = async (token: string) => {
-  const user = await getUserInfo(token);
+  const user = await fetchUserInfoApi(token);
   return user;
 };
 

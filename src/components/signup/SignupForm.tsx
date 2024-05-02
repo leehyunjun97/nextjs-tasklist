@@ -7,7 +7,7 @@ import { EyeFilledIcon } from '../icon/EyeFilledIcon';
 import { User } from '@/types/user';
 import { signValidation } from '@/utils/checkValidate';
 import Link from 'next/link';
-import { emailCheckService } from '@/services/user/user';
+import { emailCheckApi } from '@/services/user/user';
 
 const SignupForm = () => {
   // 패스워드 type 변경 전용
@@ -32,7 +32,7 @@ const SignupForm = () => {
 
     setCheckIsLoading(true);
     await new Promise((f) => setTimeout(f, 300));
-    const check = await emailCheckService(signupState.email);
+    const check = await emailCheckApi(signupState.email);
     setCheckIsLoading(false);
 
     if (check.data) {

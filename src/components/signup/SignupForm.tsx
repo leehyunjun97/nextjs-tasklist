@@ -7,7 +7,7 @@ import { EyeFilledIcon } from '../icon/EyeFilledIcon';
 import { User } from '@/types/user';
 import { signValidation } from '@/utils/checkValidate';
 import Link from 'next/link';
-import { emailCheckApi } from '@/services/user/user';
+import { emailCheckApi, signupApi } from '@/services/user/user';
 
 const SignupForm = () => {
   // 패스워드 type 변경 전용
@@ -62,21 +62,11 @@ const SignupForm = () => {
       return;
     }
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/signup`,
-      {
-        method: 'post',
-        body: JSON.stringify({
-          email: signupState.email,
-          name: signupState.name,
-          password: signupState.password,
-        }),
-      }
-    );
-    const user = await response.json();
-
-    // jwt 로직
-    console.log(user.data);
+    try {
+      await signupApi(signupState);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

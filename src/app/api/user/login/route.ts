@@ -17,7 +17,6 @@ export async function POST(request: NextRequest) {
     const { password, ...otherUserInfo } = user;
 
     const { accessToken, refreshToken } = await signJWT(otherUserInfo);
-
     setAccessTokenCookie(accessToken);
     setRefreshTokenCookie(refreshToken);
 

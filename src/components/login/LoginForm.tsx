@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { User } from '@/types/user';
 import { inputChangeHandler } from '@/utils/useFormLogic';
 import { useRouter } from 'next/navigation';
+import { loginApi } from '@/services/user/user';
 
 const LoginForm = () => {
   const router = useRouter();
@@ -37,18 +38,7 @@ const LoginForm = () => {
     }
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/login`,
-        {
-          method: 'post',
-          body: JSON.stringify({
-            email: signInState.email,
-            password: signInState.password,
-          }),
-        }
-      );
-
-      const user = await response.json();
+      const user = await loginApi(signInState);
 
       if (!user) {
         setError('- 아이디 및 비밀번호를 확인해주세요');

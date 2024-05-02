@@ -1,24 +1,35 @@
 import prisma from '@/app/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import * as bcrypt from 'bcrypt';
+import { signJWT } from '@/app/lib/jwt';
+import { setAccessTokenCookie, setRefreshTokenCookie } from '@/app/lib/cookie';
 
 export async function POST(request: NextRequest) {
-  const { email, name, password } = await request.json();
+  try {
+    const { email, name, password } = await request.json();
 
-  const user = await prisma.user.create({
-    data: {
-      email,
-      name,
-      password: await bcrypt.hash(password, 10),
-    },
-  });
+    const user = await prisma.user.create({
+      data: {
+        email,
+        name,
+        password: await bcrypt.hash(password, 10),
+      },
+    });
 
-  const { password: pw, ...result } = user;
+    const { password: pw, ...result } = user;
 
-  const response = {
-    message: '회원가입 성공',
-    data: result,
-  };
+    const { accessToken, refreshToken } = await signJWT(result);
+    setAccessTokenCookie(accessToken);
+    setRefreshTokenCookie(refreshToken);
 
-  return NextResponse.json(response, { status: 200 });
+    const response = {
+      message: '회원가입 성공',
+      data: result,
+    };
+
+    return NextResponse.json(response, { status: 200 });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({ message: '회원가입 실패' }, { status: 200 });
+  }
 }

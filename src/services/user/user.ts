@@ -1,20 +1,24 @@
 import { User } from '@/types/user';
+import { privateInstance } from '@/app/lib/axiosInterceptor';
 
 export const fetchUserInfoApi = async (accessToken: string) => {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/`,
-      {
-        method: 'get',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
+    // const response = await fetch(
+    //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/`,
+    //   {
+    //     method: 'get',
+    //     headers: {
+    //       Authorization: `Bearer ${accessToken}`,
+    //     },
+    //   }
+    // );
 
-    const data = await response.json();
+    // const data = await response.json();
 
-    return data.data as User;
+    // return data.data as User;
+
+    const response = await privateInstance.get('/api/user');
+    console.log('유저리스폰스: ', response);
   } catch (error) {
     console.log(error);
   }

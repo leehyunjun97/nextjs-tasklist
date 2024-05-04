@@ -1,5 +1,4 @@
 import { User } from '@/types/user';
-import { useCookies } from 'react-cookie';
 import { atom } from 'recoil';
 
 // const [cookies, setCookie, removeCookie] = useCookies(['accessToken']);

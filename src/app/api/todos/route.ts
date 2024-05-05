@@ -37,6 +37,16 @@ export async function GET(request: NextRequest) {
 
 // 할일 추가
 export async function POST(request: NextRequest) {
+  const accessToken = request.headers.get('Authorization');
+
+  if (!accessToken || !(await verifyJwt(accessToken.split(' ')[1]))) {
+    return NextResponse.json('No Authorization', { status: 401 });
+  }
+
+  const userInfo = await verifyJwt(accessToken.split(' ')[1]);
+
+  if (!userInfo) return;
+
   const { title, user }: { title: string; user: User } = await request.json();
 
   if (!user) return;

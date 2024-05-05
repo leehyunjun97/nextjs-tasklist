@@ -2,9 +2,10 @@ import { cookies } from 'next/headers';
 
 export const setAccessTokenCookie = (accessToken: string) => {
   cookies().set({
+    domain: 'localhost',
     name: 'accessToken',
     value: accessToken,
-    httpOnly: true,
+    httpOnly: false,
     maxAge: 60 * 60,
     path: '/',
   });
@@ -12,9 +13,10 @@ export const setAccessTokenCookie = (accessToken: string) => {
 
 export const setRefreshTokenCookie = (refreshToken: string) => {
   cookies().set({
+    domain: 'localhost',
     name: 'refreshToken',
     value: refreshToken,
-    httpOnly: true,
+    httpOnly: false,
     maxAge: 60 * 60 * 24 * 7,
     path: '/',
   });

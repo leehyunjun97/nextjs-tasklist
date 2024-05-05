@@ -1,10 +1,8 @@
 export function getCookieValue(cookieName: string) {
   const name = `${cookieName}=`;
-  // console.log(document);
-  if (typeof window === undefined) return;
-  const decodedCookie = decodeURIComponent(window.document.cookie);
 
-  console.log('디코딩된쿠키: ', decodedCookie);
+  if (typeof document === undefined) return;
+  const decodedCookie = decodeURIComponent(document.cookie);
 
   const cookieArray = decodedCookie.split(';');
 

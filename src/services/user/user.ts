@@ -1,5 +1,5 @@
 import { User } from '@/types/user';
-import { privateInstance } from '@/app/lib/axiosInterceptor';
+import { privateInstance } from '@/utils/axiosInterceptor';
 
 export const fetchUserInfoApi = async (accessToken: string) => {
   try {
@@ -19,6 +19,7 @@ export const fetchUserInfoApi = async (accessToken: string) => {
 
     const response = await privateInstance.get('/api/user');
     console.log('유저리스폰스: ', response);
+    return response.data;
   } catch (error) {
     console.log(error);
   }

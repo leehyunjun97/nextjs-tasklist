@@ -11,11 +11,11 @@ export const clientInstance = axios.create({
 clientInstance.interceptors.request.use((config) => {
   if (!config.headers) return config;
 
-  // const accessToken = getAccessTokenFromCookie();
+  const accessToken = getAccessTokenFromCookie();
 
-  // if (accessToken && config.headers) {
-  //   config.headers['Authorization'] = `Bearer ${accessToken}`;
-  // }
+  if (accessToken && config.headers) {
+    config.headers['Authorization'] = `Bearer ${accessToken}`;
+  }
 
   return config;
 });

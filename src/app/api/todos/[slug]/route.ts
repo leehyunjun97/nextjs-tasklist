@@ -1,3 +1,4 @@
+import { verifyJwt } from '@/app/lib/jwt';
 import prisma from '@/app/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -6,9 +7,6 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { slug: string } }
 ) {
-  // const searchParams = request.nextUrl.searchParams;
-  // const query = searchParams.get('query');
-
   const fetchedTodo = await prisma.todos.findFirst({
     where: {
       id: Number(params.slug),
@@ -30,6 +28,16 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { slug: string } }
 ) {
+  const accessToken = request.headers.get('Authorization');
+
+  if (!accessToken || !(await verifyJwt(accessToken.split(' ')[1]))) {
+    return NextResponse.json('No Authorization', { status: 401 });
+  }
+
+  const userInfo = await verifyJwt(accessToken.split(' ')[1]);
+
+  if (!userInfo) return;
+
   const deleteTodo = await prisma.todos.delete({
     where: {
       id: Number(params.slug),
@@ -50,6 +58,16 @@ export async function POST(
   request: NextRequest,
   { params }: { params: { slug: string } }
 ) {
+  const accessToken = request.headers.get('Authorization');
+
+  if (!accessToken || !(await verifyJwt(accessToken.split(' ')[1]))) {
+    return NextResponse.json('No Authorization', { status: 401 });
+  }
+
+  const userInfo = await verifyJwt(accessToken.split(' ')[1]);
+
+  if (!userInfo) return;
+
   const { title, is_done } = await request.json();
 
   const editTodo = await prisma.todos.update({

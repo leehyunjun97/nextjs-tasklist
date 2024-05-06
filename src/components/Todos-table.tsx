@@ -28,8 +28,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { VerticalDotsIcon } from './VerticalDotsIcon';
 import CustomModal from './CustomModal';
 import { User } from '@/types/user';
-import { addTodoApi } from '@/services/todo/todo';
-// import { addTodoApi, deleteTodoApi, editTodoApi } from '@/services/todo/todo';
+import { addTodoApi, deleteTodoApi, editTodoApi } from '@/services/todo/todo';
 import { logoutApiCall } from '@/services/user/user';
 
 const TodosTable = ({ todos, user }: { todos: Todo[]; user: User }) => {
@@ -64,37 +63,37 @@ const TodosTable = ({ todos, user }: { todos: Todo[]; user: User }) => {
     }
   };
 
-  // const editTodoHandler = async (
-  //   id: number,
-  //   editedTitle: string,
-  //   is_done: boolean
-  // ) => {
-  //   setIsLoading(true);
-  //   try {
-  //     await editTodoApi(id, editedTitle, is_done);
-  //     notify('할일이 성공적으로 수정되었습니다!');
-  //   } catch (error) {
-  //     console.log(error);
-  //     notify('수정을 실패하였습니다.');
-  //   } finally {
-  //     router.refresh();
-  //     setIsLoading(false);
-  //   }
-  // };
+  const editTodoHandler = async (
+    id: number,
+    editedTitle: string,
+    is_done: boolean
+  ) => {
+    setIsLoading(true);
+    try {
+      await editTodoApi(id, editedTitle, is_done);
+      notify('할일이 성공적으로 수정되었습니다!');
+    } catch (error) {
+      console.log(error);
+      notify('수정을 실패하였습니다.');
+    } finally {
+      router.refresh();
+      setIsLoading(false);
+    }
+  };
 
-  // const deleteTodoHandler = async (id: number) => {
-  //   setIsLoading(true);
-  //   try {
-  //     await deleteTodoApi(id);
-  //     notify('할일이 성공적으로 삭제되었습니다!');
-  //   } catch (error) {
-  //     console.log(error);
-  //     notify('삭제를 실패하였습니다.');
-  //   } finally {
-  //     router.refresh();
-  //     setIsLoading(false);
-  //   }
-  // };
+  const deleteTodoHandler = async (id: number) => {
+    setIsLoading(true);
+    try {
+      await deleteTodoApi(id);
+      notify('할일이 성공적으로 삭제되었습니다!');
+    } catch (error) {
+      console.log(error);
+      notify('삭제를 실패하였습니다.');
+    } finally {
+      router.refresh();
+      setIsLoading(false);
+    }
+  };
 
   const logoutHandler = async () => {
     try {
@@ -121,7 +120,7 @@ const TodosTable = ({ todos, user }: { todos: Todo[]; user: User }) => {
         <TableCell
           className={applyIsDoneUI(todo.is_done)}
         >{`${todo.created_at}`}</TableCell>
-        {/* <TableCell>
+        <TableCell>
           {' '}
           <div className='relative flex justify-end items-center gap-2'>
             <Dropdown>
@@ -145,7 +144,7 @@ const TodosTable = ({ todos, user }: { todos: Todo[]; user: User }) => {
               </DropdownMenu>
             </Dropdown>
           </div>
-        </TableCell> */}
+        </TableCell>
       </TableRow>
     );
   };
@@ -171,35 +170,35 @@ const TodosTable = ({ todos, user }: { todos: Todo[]; user: User }) => {
   const notify = (message: string) => toast.success(message);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  // const ModalComponent = () => {
-  //   return (
-  //     <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop='blur'>
-  //       <ModalContent>
-  //         {(onClose: any) =>
-  //           currentModalData.focusedTodo && (
-  //             <CustomModal
-  //               focusedTodo={currentModalData.focusedTodo}
-  //               modalType={currentModalData.modalType}
-  //               onClose={onClose}
-  //               onEdit={async (id, title, isDone) => {
-  //                 await editTodoHandler(id, title, isDone);
-  //                 onClose();
-  //               }}
-  //               onDelete={async (id) => {
-  //                 await deleteTodoHandler(id);
-  //                 onClose();
-  //               }}
-  //             />
-  //           )
-  //         }
-  //       </ModalContent>
-  //     </Modal>
-  //   );
-  // };
+  const ModalComponent = () => {
+    return (
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop='blur'>
+        <ModalContent>
+          {(onClose: any) =>
+            currentModalData.focusedTodo && (
+              <CustomModal
+                focusedTodo={currentModalData.focusedTodo}
+                modalType={currentModalData.modalType}
+                onClose={onClose}
+                onEdit={async (id, title, isDone) => {
+                  await editTodoHandler(id, title, isDone);
+                  onClose();
+                }}
+                onDelete={async (id) => {
+                  await deleteTodoHandler(id);
+                  onClose();
+                }}
+              />
+            )
+          }
+        </ModalContent>
+      </Modal>
+    );
+  };
 
   return (
     <div className='flex flex-col space-y-2 relative'>
-      {/* {ModalComponent()} */}
+      {ModalComponent()}
       <div className='flex w-full flex-wrap md:flex-nowrap gap-4'>
         <ToastContainer
           position='top-right'
@@ -245,7 +244,7 @@ const TodosTable = ({ todos, user }: { todos: Todo[]; user: User }) => {
           <TableColumn>할일내용</TableColumn>
           <TableColumn>완료여부</TableColumn>
           <TableColumn>생성일</TableColumn>
-          {/* <TableColumn>액션</TableColumn> */}
+          <TableColumn>액션</TableColumn>
         </TableHeader>
         <TableBody emptyContent={'보여줄 데이터가 없습니다.'}>
           {todos && todos.map((todo: Todo) => todoRow(todo))}

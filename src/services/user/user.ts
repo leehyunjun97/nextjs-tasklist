@@ -1,4 +1,5 @@
 import { User } from '@/types/user';
+import { clientInstance } from '@/utils/clientInterceptor';
 
 export const fetchUserInfoApi = async (accessToken: string) => {
   try {
@@ -26,20 +27,11 @@ export const fetchUserInfoApi = async (accessToken: string) => {
 
 export const emailCheckApi = async (email: string) => {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/signup/emailCheck`,
-      {
-        method: 'post',
-        body: JSON.stringify({
-          email,
-        }),
-        cache: 'no-store',
-      }
-    );
+    const response = await clientInstance.post(`/api/user/signup/emailCheck`, {
+      email,
+    });
 
-    const data = await response.json();
-
-    return data;
+    return response.data;
   } catch (error) {
     console.log(error);
   }
@@ -47,7 +39,7 @@ export const emailCheckApi = async (email: string) => {
 
 export const logoutApiCall = async () => {
   try {
-    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/logout`);
+    await clientInstance.get(`/api/user/logout`);
   } catch (error) {
     console.log(error);
   }
@@ -55,17 +47,11 @@ export const logoutApiCall = async () => {
 
 export const loginApi = async (signInState: User) => {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/login`,
-      {
-        method: 'post',
-        body: JSON.stringify({
-          email: signInState.email,
-          password: signInState.password,
-        }),
-      }
-    );
-    return await response.json();
+    const response = await clientInstance.post(`/api/user/login`, {
+      email: signInState.email,
+      password: signInState.password,
+    });
+    return response.data;
   } catch (error) {
     console.log(error);
   }
@@ -73,17 +59,11 @@ export const loginApi = async (signInState: User) => {
 
 export const signupApi = async (signupState: User) => {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/signup`,
-      {
-        method: 'post',
-        body: JSON.stringify({
-          email: signupState.email,
-          name: signupState.name,
-          password: signupState.password,
-        }),
-      }
-    );
+    await clientInstance.post(`/api/user/signup`, {
+      email: signupState.email,
+      name: signupState.name,
+      password: signupState.password,
+    });
   } catch (error) {
     console.log(error);
   }

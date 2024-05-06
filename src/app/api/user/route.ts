@@ -1,14 +1,9 @@
-import { verifyJwt } from '@/app/lib/jwt';
+import { isVaildToken } from '@/app/lib/token';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
-  const accessToken = request.headers.get('Authorization');
-
-  if (!accessToken || !(await verifyJwt(accessToken.split(' ')[1]))) {
-    return NextResponse.json('No Authorization', { status: 401 });
-  }
-
-  const userInfo = await verifyJwt(accessToken.split(' ')[1]);
+  const userInfo = await isVaildToken(request);
+  if (!userInfo) return NextResponse.json('No Authorization', { status: 401 });
 
   const response = {
     message: '유저 확인 정보 전달 성공',

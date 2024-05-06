@@ -11,7 +11,7 @@ export function getCookieValue(cookieName: string) {
   });
 
   if (cookie) {
-    return cookie.substring(name.length + 1, cookie.length);
+    return cookie.substring(name.length, cookie.length);
   }
   return null;
 }

@@ -31,7 +31,7 @@ import { User } from '@/types/user';
 import { addTodoApi, deleteTodoApi, editTodoApi } from '@/services/todo/todo';
 import { logoutApiCall } from '@/services/user/user';
 
-const TodosTable = ({ todos, user }: { todos: Todo[]; user: User }) => {
+const TodosTable = ({ todos }: { todos: Todo[] }) => {
   // 할일 추가 가능 여부
   const [todoAddEnable, setTodoAddEnable] = useState(false);
   // 할일 input
@@ -51,7 +51,7 @@ const TodosTable = ({ todos, user }: { todos: Todo[]; user: User }) => {
     setTodoAddEnable(false);
     setIsLoading(true);
     try {
-      await addTodoApi(title, user);
+      await addTodoApi(title);
       notify('할일이 성공적으로 추가되었습니다!');
     } catch (error) {
       console.log(error);
@@ -98,7 +98,7 @@ const TodosTable = ({ todos, user }: { todos: Todo[]; user: User }) => {
   const logoutHandler = async () => {
     try {
       await logoutApiCall();
-      router.push('/');
+      window.location.href = '/';
     } catch (error) {
       console.log(error);
     }

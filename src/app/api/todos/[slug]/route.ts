@@ -1,42 +1,14 @@
-import { verifyJwt } from '@/app/lib/jwt';
 import prisma from '@/app/lib/prisma';
+import { isVaildToken } from '@/app/lib/token';
 import { NextRequest, NextResponse } from 'next/server';
-
-// 할일 단일 조희
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { slug: string } }
-) {
-  const fetchedTodo = await prisma.todos.findFirst({
-    where: {
-      id: Number(params.slug),
-    },
-  });
-
-  if (fetchedTodo === null) return new Response(null, { status: 204 });
-
-  const response = {
-    message: '단일 할일 가져오기 성공',
-    data: fetchedTodo,
-  };
-
-  return NextResponse.json(response, { status: 200 });
-}
 
 // 할일 단일 삭제
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { slug: string } }
 ) {
-  const accessToken = request.headers.get('Authorization');
-
-  if (!accessToken || !(await verifyJwt(accessToken.split(' ')[1]))) {
+  if (!(await isVaildToken(request)))
     return NextResponse.json('No Authorization', { status: 401 });
-  }
-
-  const userInfo = await verifyJwt(accessToken.split(' ')[1]);
-
-  if (!userInfo) return;
 
   const deleteTodo = await prisma.todos.delete({
     where: {
@@ -58,15 +30,8 @@ export async function POST(
   request: NextRequest,
   { params }: { params: { slug: string } }
 ) {
-  const accessToken = request.headers.get('Authorization');
-
-  if (!accessToken || !(await verifyJwt(accessToken.split(' ')[1]))) {
+  if (!(await isVaildToken(request)))
     return NextResponse.json('No Authorization', { status: 401 });
-  }
-
-  const userInfo = await verifyJwt(accessToken.split(' ')[1]);
-
-  if (!userInfo) return;
 
   const { title, is_done } = await request.json();
 

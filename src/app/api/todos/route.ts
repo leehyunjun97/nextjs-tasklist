@@ -1,20 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/app/lib/prisma';
-import { verifyJwt } from '@/app/lib/jwt';
-import { User } from '@/types/user';
+import { isVaildToken } from '@/app/lib/token';
 
 // 모든 할일 가져오기
 export async function GET(request: NextRequest) {
-  const accessToken = request.headers.get('Authorization');
-
-  if (!accessToken || !(await verifyJwt(accessToken.split(' ')[1]))) {
-    return NextResponse.json('No Authorization', { status: 401 });
-  }
-
-  // 난중에 물어볼거
-  const userInfo = await verifyJwt(accessToken.split(' ')[1]);
-
-  if (!userInfo) return;
+  const userInfo = await isVaildToken(request);
+  if (!userInfo) return NextResponse.json('No Authorization', { status: 401 });
 
   const fetchedTodos = await prisma.todos.findMany({
     // 최신순으로 정렬
@@ -37,19 +28,10 @@ export async function GET(request: NextRequest) {
 
 // 할일 추가
 export async function POST(request: NextRequest) {
-  const accessToken = request.headers.get('Authorization');
+  const userInfo = await isVaildToken(request);
+  if (!userInfo) return NextResponse.json('No Authorization', { status: 401 });
 
-  if (!accessToken || !(await verifyJwt(accessToken.split(' ')[1]))) {
-    return NextResponse.json('No Authorization', { status: 401 });
-  }
-
-  const userInfo = await verifyJwt(accessToken.split(' ')[1]);
-
-  if (!userInfo) return;
-
-  const { title, user }: { title: string; user: User } = await request.json();
-
-  if (!user) return;
+  const { title }: { title: string } = await request.json();
 
   if (title === undefined) {
     const errMessage = {
@@ -63,7 +45,7 @@ export async function POST(request: NextRequest) {
       title,
       author: {
         connect: {
-          id: user.id,
+          id: userInfo.id,
         },
       },
     },

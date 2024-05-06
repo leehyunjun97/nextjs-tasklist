@@ -1,7 +1,7 @@
 import { fetchUserInfoApi } from '@/services/user/user';
 import { User } from '@/types/user';
-import { NextResponse } from 'next/server';
-import { signJWT } from './jwt';
+import { NextRequest, NextResponse } from 'next/server';
+import { signJWT, verifyJwt } from './jwt';
 
 // 토큰 정상 확인 체크 함수
 export const checkToken = async (token: string) => {
@@ -24,4 +24,16 @@ export const getNewAccessToken = async (user: User, response: NextResponse) => {
     path: '/',
   });
   return response;
+};
+
+export const isVaildToken = async (request: NextRequest) => {
+  const accessToken = request.headers.get('Authorization');
+
+  if (!accessToken) return null;
+
+  const userInfo = await verifyJwt(accessToken.split(' ')[1]);
+
+  if (!userInfo) return null;
+
+  return userInfo as User;
 };

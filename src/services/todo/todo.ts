@@ -1,4 +1,3 @@
-import { User } from '@/types/user';
 import { serverInstance } from '@/utils/axiosInterceptor';
 import { clientInstance } from '@/utils/clientInterceptor';
 
@@ -11,12 +10,11 @@ export const fetchTodosApiCall = async () => {
   }
 };
 
-export const addTodoApi = async (title: string, user: User) => {
+export const addTodoApi = async (title: string) => {
   try {
     await new Promise((f) => setTimeout(f, 500));
     await clientInstance.post('/api/todos/', {
       title,
-      user,
     });
   } catch (error) {
     console.log(error);

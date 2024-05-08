@@ -24,7 +24,8 @@ export const setRefreshTokenCookie = (refreshToken: string) => {
 
 export const getAccessToken = () => {
   const cookieStore = cookies();
-  const accessToken = cookieStore.get('accessToken')!.value;
+  if (!cookieStore) return null;
+  const accessToken = cookieStore.get('accessToken')?.value;
   return accessToken;
 };
 

@@ -4,9 +4,14 @@ import { clientInstance } from '@/utils/clientInterceptor';
 export const fetchTodosApiCall = async () => {
   try {
     const response = await serverInstance.get('/api/todos/');
-    return response.data.data;
+
+    if (response && response.data) {
+      return response.data.data;
+    } else {
+      throw new Error('No data found in response');
+    }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 };
 

@@ -10,8 +10,8 @@ export async function DELETE(
   const token = request.headers.get('Authorization');
   const vaildResult = await isVaildTokenApi(token);
 
-  if (!vaildResult.data.userInfo)
-    return NextResponse.json(vaildResult.data.message, {
+  if (!vaildResult.userInfo)
+    return NextResponse.json(vaildResult.message, {
       status: vaildResult.status,
     });
 
@@ -38,8 +38,8 @@ export async function POST(
   const token = request.headers.get('Authorization');
   const vaildResult = await isVaildTokenApi(token);
 
-  if (!vaildResult.data.userInfo)
-    return NextResponse.json(vaildResult.data.message, {
+  if (!vaildResult.userInfo)
+    return NextResponse.json(vaildResult.message, {
       status: vaildResult.status,
     });
 

@@ -2,7 +2,6 @@ import { fetchUserInfoApi } from '@/services/user/user';
 import { User } from '@/types/user';
 import { NextResponse } from 'next/server';
 import { signJWT } from './jwt';
-import axios from 'axios';
 
 // 토큰 정상 확인 체크 함수
 export const checkToken = async (token: string) => {

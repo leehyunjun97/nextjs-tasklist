@@ -4,31 +4,37 @@ import { isVaildTokenApi } from '@/services/auth/token';
 
 // 모든 할일 가져오기
 export async function GET(request: NextRequest) {
-  const token = request.headers.get('Authorization');
-  const vaildResult = await isVaildTokenApi(token);
+  try {
+    const token = request.headers.get('Authorization');
+    const vaildResult = await isVaildTokenApi(token);
 
-  if (!vaildResult.data.userInfo)
-    return NextResponse.json(vaildResult.data.message, {
-      status: vaildResult.status,
+    if (!vaildResult.userInfo) {
+      return NextResponse.json(vaildResult.message, {
+        status: vaildResult.status,
+      });
+    }
+
+    const fetchedTodos = await prisma.todos.findMany({
+      // 최신순으로 정렬
+      where: {
+        authorId: vaildResult.userInfo.id,
+      },
+      orderBy: [
+        {
+          created_at: 'desc',
+        },
+      ],
     });
 
-  const fetchedTodos = await prisma.todos.findMany({
-    // 최신순으로 정렬
-    where: {
-      authorId: vaildResult.data.userInfo.id,
-    },
-    orderBy: [
-      {
-        created_at: 'desc',
-      },
-    ],
-  });
+    const response = {
+      message: 'todos 가져오기',
+      data: { fetchedTodos, userInfo: vaildResult.userInfo },
+    };
 
-  const response = {
-    message: 'todos 가져오기',
-    data: { fetchedTodos, userInfo: vaildResult.data.userInfo },
-  };
-  return NextResponse.json(response, { status: 200 });
+    return NextResponse.json(response, { status: 200 });
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 // 할일 추가
@@ -36,8 +42,8 @@ export async function POST(request: NextRequest) {
   const token = request.headers.get('Authorization');
   const vaildResult = await isVaildTokenApi(token);
 
-  if (!vaildResult.data.userInfo)
-    return NextResponse.json(vaildResult.data.message, {
+  if (!vaildResult.userInfo)
+    return NextResponse.json(vaildResult.message, {
       status: vaildResult.status,
     });
 
@@ -55,7 +61,7 @@ export async function POST(request: NextRequest) {
       title,
       author: {
         connect: {
-          id: vaildResult.data.userInfo.id,
+          id: vaildResult.userInfo.id,
         },
       },
     },

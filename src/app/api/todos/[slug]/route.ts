@@ -1,5 +1,5 @@
 import prisma from '@/app/lib/prisma';
-import { isVaildToken } from '@/app/lib/token';
+import { isVaildTokenApi } from '@/app/lib/token';
 import { NextRequest, NextResponse } from 'next/server';
 
 // 할일 단일 삭제
@@ -7,9 +7,13 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { slug: string } }
 ) {
-  const result = await isVaildToken(request);
-  if (!result.userInfo)
-    return NextResponse.json(result.message, { status: result.status });
+  const token = request.headers.get('Authorization');
+  const vaildResult = await isVaildTokenApi(token);
+
+  if (!vaildResult.data.userInfo)
+    return NextResponse.json(vaildResult.data.message, {
+      status: vaildResult.status,
+    });
 
   const deleteTodo = await prisma.todos.delete({
     where: {
@@ -31,9 +35,13 @@ export async function POST(
   request: NextRequest,
   { params }: { params: { slug: string } }
 ) {
-  const result = await isVaildToken(request);
-  if (!result.userInfo)
-    return NextResponse.json(result.message, { status: result.status });
+  const token = request.headers.get('Authorization');
+  const vaildResult = await isVaildTokenApi(token);
+
+  if (!vaildResult.data.userInfo)
+    return NextResponse.json(vaildResult.data.message, {
+      status: vaildResult.status,
+    });
 
   const { title, is_done } = await request.json();
 

@@ -2,6 +2,7 @@ import { fetchUserInfoApi } from '@/services/user/user';
 import { User } from '@/types/user';
 import { NextRequest, NextResponse } from 'next/server';
 import { signJWT, verifyJwt } from './jwt';
+import axios from 'axios';
 
 // 토큰 정상 확인 체크 함수
 export const checkToken = async (token: string) => {
@@ -34,8 +35,18 @@ export const isVaildToken = async (request: NextRequest) => {
 
   const userInfo = await verifyJwt(accessToken.split(' ')[1]);
 
-  if (!userInfo)
-    return { userInfo: null, status: 403, message: 'Forbidden 입니다' };
+  if (!userInfo) return { userInfo: null, status: 403, message: 'Forbidden' };
 
   return { userInfo, status: 200, message: '' };
+};
+
+export const isVaildTokenApi = async (token: string | null) => {
+  const result = await axios.post(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/token/validateToken`,
+    {
+      token,
+    }
+  );
+
+  return result;
 };

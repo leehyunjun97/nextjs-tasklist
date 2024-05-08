@@ -1,17 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/app/lib/prisma';
-import { isVaildToken } from '@/app/lib/token';
+import { isVaildTokenApi } from '@/app/lib/token';
 
 // 모든 할일 가져오기
 export async function GET(request: NextRequest) {
-  const result = await isVaildToken(request);
-  if (!result.userInfo)
-    return NextResponse.json(result.message, { status: result.status });
+  const token = request.headers.get('Authorization');
+  const vaildResult = await isVaildTokenApi(token);
+
+  if (!vaildResult.data.userInfo)
+    return NextResponse.json(vaildResult.data.message, {
+      status: vaildResult.status,
+    });
 
   const fetchedTodos = await prisma.todos.findMany({
     // 최신순으로 정렬
     where: {
-      authorId: result.userInfo.id,
+      authorId: vaildResult.data.userInfo.id,
     },
     orderBy: [
       {
@@ -22,16 +26,20 @@ export async function GET(request: NextRequest) {
 
   const response = {
     message: 'todos 가져오기',
-    data: { fetchedTodos, userInfo: result.userInfo },
+    data: { fetchedTodos, userInfo: vaildResult.data.userInfo },
   };
   return NextResponse.json(response, { status: 200 });
 }
 
 // 할일 추가
 export async function POST(request: NextRequest) {
-  const result = await isVaildToken(request);
-  if (!result.userInfo)
-    return NextResponse.json(result.message, { status: result.status });
+  const token = request.headers.get('Authorization');
+  const vaildResult = await isVaildTokenApi(token);
+
+  if (!vaildResult.data.userInfo)
+    return NextResponse.json(vaildResult.data.message, {
+      status: vaildResult.status,
+    });
 
   const { title }: { title: string } = await request.json();
 
@@ -47,7 +55,7 @@ export async function POST(request: NextRequest) {
       title,
       author: {
         connect: {
-          id: result.userInfo.id,
+          id: vaildResult.data.userInfo.id,
         },
       },
     },

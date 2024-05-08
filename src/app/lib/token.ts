@@ -1,7 +1,7 @@
 import { fetchUserInfoApi } from '@/services/user/user';
 import { User } from '@/types/user';
-import { NextRequest, NextResponse } from 'next/server';
-import { signJWT, verifyJwt } from './jwt';
+import { NextResponse } from 'next/server';
+import { signJWT } from './jwt';
 import axios from 'axios';
 
 // 토큰 정상 확인 체크 함수
@@ -25,28 +25,4 @@ export const getNewAccessToken = async (user: User, response: NextResponse) => {
     path: '/',
   });
   return response;
-};
-
-export const isVaildToken = async (request: NextRequest) => {
-  const accessToken = request.headers.get('Authorization');
-
-  if (!accessToken)
-    return { userInfo: null, status: 401, message: 'No Authorization' };
-
-  const userInfo = await verifyJwt(accessToken.split(' ')[1]);
-
-  if (!userInfo) return { userInfo: null, status: 403, message: 'Forbidden' };
-
-  return { userInfo, status: 200, message: '' };
-};
-
-export const isVaildTokenApi = async (token: string | null) => {
-  const result = await axios.post(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/token/validateToken`,
-    {
-      token,
-    }
-  );
-
-  return result;
 };

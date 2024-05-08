@@ -1,5 +1,5 @@
 import prisma from '@/app/lib/prisma';
-import { isVaildTokenApi } from '@/app/lib/token';
+import { isVaildTokenApi } from '@/services/auth/token';
 import { NextRequest, NextResponse } from 'next/server';
 
 // 할일 단일 삭제

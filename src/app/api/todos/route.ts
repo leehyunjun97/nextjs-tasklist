@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/app/lib/prisma';
-import { isVaildTokenApi } from '@/app/lib/token';
+import { isVaildTokenApi } from '@/services/auth/token';
 
 // 모든 할일 가져오기
 export async function GET(request: NextRequest) {

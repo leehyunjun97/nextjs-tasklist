@@ -23,3 +23,15 @@ clientInstance.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
+clientInstance.interceptors.response.use(
+  (response) => {
+    if (response.status === 404) console.log('404 Error');
+    return response;
+  },
+  async (error) => {
+    if (error.response.status === 401) {
+      console.log('그 뭐야 401입니다');
+    }
+  }
+);

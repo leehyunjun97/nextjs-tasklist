@@ -7,8 +7,9 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { slug: string } }
 ) {
-  if (!(await isVaildToken(request)))
-    return NextResponse.json('No Authorization', { status: 401 });
+  const result = await isVaildToken(request);
+  if (!result.userInfo)
+    return NextResponse.json(result.message, { status: result.status });
 
   const deleteTodo = await prisma.todos.delete({
     where: {
@@ -30,8 +31,9 @@ export async function POST(
   request: NextRequest,
   { params }: { params: { slug: string } }
 ) {
-  if (!(await isVaildToken(request)))
-    return NextResponse.json('No Authorization', { status: 401 });
+  const result = await isVaildToken(request);
+  if (!result.userInfo)
+    return NextResponse.json(result.message, { status: result.status });
 
   const { title, is_done } = await request.json();
 

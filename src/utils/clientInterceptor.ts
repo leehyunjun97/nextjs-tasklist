@@ -1,7 +1,12 @@
 'use client';
 
 import axios from 'axios';
-import { getAccessTokenFromCookie } from './getCookie';
+import {
+  deleteCookie,
+  getAccessTokenFromCookie,
+  getRefreshTokenFromCookie,
+} from './getCookie';
+import { fetchUserInfoApi } from '@/services/user/user';
 
 export const clientInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
@@ -10,7 +15,7 @@ export const clientInstance = axios.create({
 });
 
 clientInstance.interceptors.request.use(
-  (config) => {
+  async (config) => {
     if (!config.headers) return config;
 
     const accessToken = getAccessTokenFromCookie();
@@ -29,9 +34,16 @@ clientInstance.interceptors.response.use(
     if (response.status === 404) console.log('404 Error');
     return response;
   },
-  async (error) => {
-    if (error.response.status === 401) {
-      console.log('그 뭐야 401입니다');
+  (error) => {
+    if (error.response.status === 403) {
+      deleteCookie('accessToken');
+      deleteCookie('refreshToken');
+      window.location.href = '/';
+      alert('잘못된 접근입니다.');
     }
+
+    if (error.response.status === 401) {
+    }
+    return Promise.reject(error);
   }
 );

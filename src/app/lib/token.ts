@@ -29,11 +29,13 @@ export const getNewAccessToken = async (user: User, response: NextResponse) => {
 export const isVaildToken = async (request: NextRequest) => {
   const accessToken = request.headers.get('Authorization');
 
-  if (!accessToken) return null;
+  if (!accessToken)
+    return { userInfo: null, status: 401, message: 'No Authorization' };
 
   const userInfo = await verifyJwt(accessToken.split(' ')[1]);
 
-  if (!userInfo) return null;
+  if (!userInfo)
+    return { userInfo: null, status: 403, message: 'Forbidden 입니다' };
 
-  return userInfo as User;
+  return { userInfo, status: 200, message: '' };
 };

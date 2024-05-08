@@ -8,7 +8,8 @@ const TodosPage = async () => {
   return (
     <div className='flex flex-col space-y-8'>
       <h1 className='text-3xl'>Todos</h1>
-      {response && <TodosTable todos={response.fetchedTodos ?? []} />}
+
+      <TodosTable todos={response?.fetchedTodos ?? []} />
     </div>
   );
 };

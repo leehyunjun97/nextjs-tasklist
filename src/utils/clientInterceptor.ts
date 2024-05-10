@@ -46,7 +46,7 @@ clientInstance.interceptors.response.use(
     // 액세스 토큰 만료
     if (error.response.status === 401) {
       const refreshToken = getRefreshTokenFromCookie();
-
+      // 리프레시 토큰도 만료 되었을 떄
       if (!refreshToken) {
         window.location.href = '/';
         return error;
@@ -54,24 +54,22 @@ clientInstance.interceptors.response.use(
 
       const vaildResult = await isVaildTokenApi('Bearer ' + refreshToken);
 
+      // 리프레시 토큰이 조작 되었을 때
       if (vaildResult.status === 403) {
         deleteCookie('refreshToken');
         window.location.href = '/';
-        alert('잘못된 접근입니다.');
+        alert('리프레시 토큰 조작');
         return error;
       }
 
       if (vaildResult.status === 201) {
         // 재발급
         await refreshTokenApi();
-
         const accessToken = getAccessTokenFromCookie();
-
         error.config.headers = {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${accessToken}`,
         };
-
         const response = await axios.request(error.config);
         return response;
       }

@@ -6,6 +6,7 @@ import {
   getAccessTokenFromCookie,
   getRefreshTokenFromCookie,
 } from './getCookie';
+import { isVaildTokenApi, refreshTokenApi } from '@/services/auth/token';
 
 export const clientInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
@@ -34,25 +35,46 @@ clientInstance.interceptors.response.use(
     return response;
   },
   async (error) => {
-    // 토큰 조작
+    // 토큰이 조작되었을 시
     if (error.response.status === 403) {
       deleteCookie('accessToken');
       deleteCookie('refreshToken');
-
       window.location.href = '/';
       alert('잘못된 접근입니다.');
     }
 
     // 액세스 토큰 만료
     if (error.response.status === 401) {
-      console.log('비용삐뵤ㅇ용');
-
       const refreshToken = getRefreshTokenFromCookie();
-      console.log(refreshToken);
 
-      // const vaildResult = await isVaildTokenApi(refreshToken);
+      if (!refreshToken) {
+        window.location.href = '/';
+        return error;
+      }
 
-      // console.log(vaildResult);
+      const vaildResult = await isVaildTokenApi('Bearer ' + refreshToken);
+
+      if (vaildResult.status === 403) {
+        deleteCookie('refreshToken');
+        window.location.href = '/';
+        alert('잘못된 접근입니다.');
+        return error;
+      }
+
+      if (vaildResult.status === 201) {
+        // 재발급
+        await refreshTokenApi();
+
+        const accessToken = getAccessTokenFromCookie();
+
+        error.config.headers = {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        };
+
+        const response = await axios.request(error.config);
+        return response;
+      }
     }
     return Promise.reject(error);
   }

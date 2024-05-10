@@ -29,6 +29,13 @@ export const getAccessToken = () => {
   return accessToken;
 };
 
+export const getRefreshToken = () => {
+  const cookieStore = cookies();
+  if (!cookieStore) return null;
+  const refreshToken = cookieStore.get('refreshToken')?.value;
+  return refreshToken;
+};
+
 export const deleteTokens = () => {
   cookies().delete('accessToken');
   cookies().delete('refreshToken');

@@ -10,6 +10,7 @@ export async function POST(request: NextRequest) {
     }
 
     const userInfo = await verifyJwt(token.split(' ')[1]);
+    console.log('유저 확인: ', userInfo);
 
     if (!userInfo) {
       return NextResponse.json({ message: 'Forbidden', status: 403 });

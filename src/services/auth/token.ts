@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { NextResponse } from 'next/server';
 
 export const isVaildTokenApi = async (token: string | null | undefined) => {
   try {
@@ -15,4 +14,12 @@ export const isVaildTokenApi = async (token: string | null | undefined) => {
   } catch (error) {
     // console.log(error);
   }
+};
+
+export const refreshTokenApi = async () => {
+  try {
+    await axios.get(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/token/refreshToken`
+    );
+  } catch (error) {}
 };

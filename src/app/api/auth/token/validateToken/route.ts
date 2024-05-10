@@ -9,8 +9,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: 'No Authorization', status: 401 });
     }
 
-    const userInfo = await verifyJwt(token.split(' ')[1]);
-    console.log('유저 확인: ', userInfo);
+    let splitToken = token.split(' ')[1];
+    if (splitToken.charAt(0) === '=') {
+      splitToken = splitToken.slice(1);
+    }
+
+    const userInfo = await verifyJwt(splitToken);
 
     if (!userInfo) {
       return NextResponse.json({ message: 'Forbidden', status: 403 });

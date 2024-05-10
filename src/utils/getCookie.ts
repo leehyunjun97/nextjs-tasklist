@@ -6,11 +6,15 @@ export function getCookieValue(cookieName: string) {
 
   const cookieArray = decodedCookie.split(';');
 
-  const cookie = cookieArray.find((cookieItem) => {
+  let cookie = cookieArray.find((cookieItem) => {
     return cookieItem.trim().startsWith(name);
   });
 
   if (cookie) {
+    if (cookie.charAt(0) === '=') {
+      cookie = cookie.slice(1);
+    }
+
     return cookie.substring(name.length, cookie.length);
   }
   return null;

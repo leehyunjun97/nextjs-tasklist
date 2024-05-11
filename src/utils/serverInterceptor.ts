@@ -1,7 +1,8 @@
 'use server';
 
 import axios from 'axios';
-import { deleteTokens, getAccessToken } from '@/app/lib/cookie';
+import { getAccessToken, getRefreshToken } from '@/app/lib/cookie';
+import { NextResponse } from 'next/server';
 
 export const serverInstance = axios.create({
   baseURL: process.env.BASE_URL,
@@ -28,21 +29,23 @@ serverInstance.interceptors.request.use(
 
 serverInstance.interceptors.response.use(
   (response) => {
-    console.log('정상입니다');
-
     if (response.status === 404) console.log('404 Error');
     return response;
   },
-  (error) => {
+  async (error) => {
     if (error.response.status === 403) {
-      console.log('403');
-
-      deleteTokens();
-      error.response.redirect('/');
-      return error.response;
+      let response = NextResponse.redirect(new URL('/', error.config.url));
+      // response.cookies.delete('accessToken');
+      response.cookies.delete('refreshToken');
+      return response;
     }
+
     if (error.response.status === 401) {
-      console.log('401');
+      const refreshToken = getRefreshToken();
+      console.log('401: ', refreshToken);
+
+      // 일단 테스트
+      // await refreshTokenApi();
     }
   }
 );

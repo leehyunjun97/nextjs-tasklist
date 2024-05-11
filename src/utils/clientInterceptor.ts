@@ -11,7 +11,7 @@ import { isVaildTokenApi, refreshTokenApi } from '@/services/auth/token';
 export const clientInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
   withCredentials: true,
-  headers: { 'Cache-Control': 'no-cache' },
+  headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
 });
 
 clientInstance.interceptors.request.use(
@@ -39,7 +39,6 @@ clientInstance.interceptors.response.use(
     if (error.response.status === 403) {
       deleteCookie('accessToken');
       deleteCookie('refreshToken');
-      window.location.href = '/';
       alert('잘못된 접근입니다.');
     }
 
@@ -48,8 +47,8 @@ clientInstance.interceptors.response.use(
       const refreshToken = getRefreshTokenFromCookie();
       // 리프레시 토큰도 만료 되었을 떄
       if (!refreshToken) {
-        window.location.href = '/';
-        return error;
+        alert('정보가 만료되었습니다. 로그인을 다시 해주세요');
+        return;
       }
 
       const vaildResult = await isVaildTokenApi('Bearer ' + refreshToken);
@@ -57,19 +56,14 @@ clientInstance.interceptors.response.use(
       // 리프레시 토큰이 조작 되었을 때
       if (vaildResult.status === 403) {
         deleteCookie('refreshToken');
-        window.location.href = '/';
-        alert('리프레시 토큰 조작');
-        return error;
+        return;
       }
 
       if (vaildResult.status === 201) {
         // 재발급
         await refreshTokenApi();
         const accessToken = getAccessTokenFromCookie();
-        error.config.headers = {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        };
+        error.config.headers['Authorization'] = `Bearer ${accessToken}`;
         const response = await axios.request(error.config);
         return response;
       }

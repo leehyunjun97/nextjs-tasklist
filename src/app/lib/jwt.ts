@@ -48,6 +48,8 @@ export const verifyJwt = async (token: string) => {
       audience,
     });
 
+    if (!decoded) return null;
+
     return decoded.payload as unknown as User;
   } catch (error) {
     console.log(error);

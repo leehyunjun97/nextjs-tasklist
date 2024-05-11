@@ -1,4 +1,4 @@
-import { serverInstance } from '@/utils/axiosInterceptor';
+import { serverInstance } from '@/utils/serverInterceptor';
 import { clientInstance } from '@/utils/clientInterceptor';
 
 export const fetchTodosApiCall = async () => {

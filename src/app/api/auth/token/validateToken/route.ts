@@ -16,8 +16,6 @@ export async function POST(request: NextRequest) {
 
     const userInfo = await verifyJwt(splitToken);
 
-    console.log('변환된 유저 체크: ', userInfo);
-
     if (!userInfo) {
       return NextResponse.json({ message: 'Forbidden', status: 403 });
     }

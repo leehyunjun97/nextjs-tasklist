@@ -1,8 +1,12 @@
 'use server';
 
 import axios from 'axios';
-import { getAccessToken, getRefreshToken } from '@/app/lib/cookie';
-import { NextResponse } from 'next/server';
+import {
+  deleteTokens,
+  getAccessToken,
+  getRefreshToken,
+} from '@/app/lib/cookie';
+import { refreshTokenApi } from '@/services/auth/token';
 
 export const serverInstance = axios.create({
   baseURL: process.env.BASE_URL,
@@ -34,18 +38,16 @@ serverInstance.interceptors.response.use(
   },
   async (error) => {
     if (error.response.status === 403) {
-      let response = NextResponse.redirect(new URL('/', error.config.url));
-      // response.cookies.delete('accessToken');
-      response.cookies.delete('refreshToken');
-      return response;
+      console.log('403');
+
+      // 403 토큰 조작 딜리트 부분
+      deleteTokens();
     }
 
     if (error.response.status === 401) {
       const refreshToken = getRefreshToken();
       console.log('401: ', refreshToken);
-
-      // 일단 테스트
-      // await refreshTokenApi();
+      await refreshTokenApi();
     }
   }
 );

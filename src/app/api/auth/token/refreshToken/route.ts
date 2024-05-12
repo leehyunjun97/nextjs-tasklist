@@ -5,6 +5,9 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
   try {
     const refreshToken = getRefreshToken();
+
+    console.log('api refreshToken', refreshToken);
+
     const userInfo = await verifyJwt(refreshToken!);
     const newAccessToken = (await signJWT(userInfo!)).accessToken;
     setAccessTokenCookie(newAccessToken);

@@ -7,12 +7,14 @@ import {
   getRefreshToken,
 } from '@/app/lib/cookie';
 import { refreshTokenApi } from '@/services/auth/token';
+import { deleteCookieApi } from '@/services/auth/cookie';
 
 export const serverInstance = axios.create({
   baseURL: process.env.BASE_URL,
   headers: {
     'Content-Type': 'application/json',
-    'Cache-Control': 'no-cache',
+    withCredentials: true,
+    // 'Cache-Control': 'no-cache',
   },
 });
 
@@ -38,10 +40,9 @@ serverInstance.interceptors.response.use(
   },
   async (error) => {
     if (error.response.status === 403) {
-      console.log('403');
+      console.log('403: ');
 
-      // 403 토큰 조작 딜리트 부분
-      deleteTokens();
+      await deleteCookieApi();
     }
 
     if (error.response.status === 401) {

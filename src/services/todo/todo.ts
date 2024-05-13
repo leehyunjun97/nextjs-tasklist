@@ -3,6 +3,7 @@ import { clientInstance } from '@/utils/clientInterceptor';
 
 export const fetchTodosApiCall = async () => {
   try {
+    console.log('서비스');
     const response = await serverInstance.get('/api/todos/');
 
     if (response && response.data) {

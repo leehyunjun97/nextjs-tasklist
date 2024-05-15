@@ -8,13 +8,15 @@ import {
 } from '@/app/lib/cookie';
 import { refreshTokenApi } from '@/services/auth/token';
 import { deleteCookieApi } from '@/services/auth/cookie';
+import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
 
 export const serverInstance = axios.create({
   baseURL: process.env.BASE_URL,
   headers: {
     'Content-Type': 'application/json',
     withCredentials: true,
-    // 'Cache-Control': 'no-cache',
+    'Cache-Control': 'no-store',
   },
 });
 
@@ -33,22 +35,29 @@ serverInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-serverInstance.interceptors.response.use(
-  (response) => {
-    if (response.status === 404) console.log('404 Error');
-    return response;
-  },
-  async (error) => {
-    if (error.response.status === 403) {
-      console.log('403: ');
+// serverInstance.interceptors.response.use(
+//   (response) => {
+//     if (response.status === 404) console.log('404 Error');
+//     return response;
+//   },
+//   async (error) => {
+//     if (error.response.status === 401) {
+//       const refreshToken = getRefreshToken();
 
-      await deleteCookieApi();
-    }
+//       // console.log(error);
 
-    if (error.response.status === 401) {
-      const refreshToken = getRefreshToken();
-      console.log('401: ', refreshToken);
-      await refreshTokenApi();
-    }
-  }
-);
+//       // const response = NextResponse.redirect('/');
+
+//       // return response;
+
+//       const cookieStore = cookies();
+//       cookieStore.delete('refreshToken');
+//       // deleteTokens();
+//       // console.log('401: ', refreshToken);
+//       // await refreshTokenApi();
+//       return Promise.reject(error);
+//     }
+
+//     return Promise.reject(error);
+//   }
+// );

@@ -5,6 +5,8 @@ export async function POST(request: NextRequest) {
   try {
     const { token } = await request.json();
 
+    console.log(token);
+
     const errorResponse = NextResponse.json({
       message: 'No Authorization',
       status: 401,
@@ -23,6 +25,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ userInfo, status: 201, massage: '유저 있음' });
   } catch (error) {
-    // console.log(error);
+    console.log(error);
   }
 }

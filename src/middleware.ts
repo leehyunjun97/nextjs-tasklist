@@ -1,20 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { setAccessTokenCookie } from './app/lib/cookie';
-import { getAccessTokenFromCookie } from './utils/getCookie';
+import { isVaildTokenApi } from './services/auth/token';
 
 export async function middleware(request: NextRequest) {
   let accessToken = request.cookies.get('accessToken')?.value;
   let refreshToken = request.cookies.get('refreshToken')?.value;
   let path = request.nextUrl.pathname;
 
-  // const response = NextResponse.next();
-
-  // console.log('여기도없음??: ', accessToken);
-
   if (path === '/api/todos') {
-    // console.log('ㅁㄴㅇㅁㄴㅇㅁㄴㅇ');
-    // console.log('리스폰스: ', response);
-    //   console.log('api 미들웨어: ', request);
+    console.log('api 쿠키: ', request.headers);
+    // 쿠키가 없음
     //   // const requestHeaders = new Headers(request.headers);
     //   // requestHeaders.set('Authorization', `Bearer ${accessToken}`);
     //   // const response = NextResponse.next({
@@ -27,36 +21,42 @@ export async function middleware(request: NextRequest) {
 
   // // 액세스 토큰이 있을 시 홈으로 못가게
   if (path === '/' || path === '/signup') {
-
-   
-
-
     if (accessToken || refreshToken)
       return NextResponse.redirect(new URL('/todos', request.url));
   }
 
   if (path === '/todos') {
-    // console.log('페이지 미들웨어');
     if (!accessToken && !refreshToken)
       return NextResponse.redirect(new URL('/', request.url));
 
-    // const requestHeaders = new Headers(request.headers);
+    // const vaild = await isVaildTokenApi(accessToken);
 
-    // requestHeaders.set('Authorization', `Bearer ${accessToken}`);
+    try {
+      const vaild = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/token/validateToken/`,
+        {
+          method: 'POST',
+          body: JSON.stringify({ token: `Bearer ${accessToken}` }),
+        }
+      )
+        .then(async (item) => {
+          return await item.json();
+        })
+        .then((item) => {
+          console.log(item);
+        });
 
-    // const response = NextResponse.next({
-    //   request: {
-    //     headers: requestHeaders,
-    //   },
-    // });
-
-    // return response;
+      // const data = await vaild.json();
+      // console.log('미들웨어 밸리드:', vaild);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 
 export const config = {
   matcher: [
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
-    // '/api/todos/:path',
+    '/api/todos/:path',
   ],
 };

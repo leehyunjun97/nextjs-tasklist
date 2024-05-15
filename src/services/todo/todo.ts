@@ -3,13 +3,13 @@ import { clientInstance } from '@/utils/clientInterceptor';
 
 export const fetchTodosApiCall = async () => {
   try {
-    console.log('서비스');
     const response = await serverInstance.get('/api/todos/');
+    // const response = await clientInstance.get('/api/todos/');
 
     if (response && response.data) {
       return response.data.data;
     } else {
-      throw new Error('No data found in response');
+      throw new Error('No data found in res ponse');
     }
   } catch (error) {
     // console.log(error);

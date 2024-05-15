@@ -11,7 +11,7 @@ import { isVaildTokenApi, refreshTokenApi } from '@/services/auth/token';
 export const clientInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
   withCredentials: true,
-  headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
+  headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
 });
 
 clientInstance.interceptors.request.use(
@@ -51,6 +51,8 @@ clientInstance.interceptors.response.use(
         error.config.headers['Authorization'] = `Bearer ${accessToken}`;
         const response = await axios.request(error.config);
         return response;
+      } else {
+        deleteCookie('refreshToken');
       }
     }
     return Promise.reject(error);

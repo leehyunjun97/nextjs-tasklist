@@ -27,7 +27,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { VerticalDotsIcon } from './VerticalDotsIcon';
 import CustomModal from './CustomModal';
-import { User } from '@/types/user';
 import { addTodoApi, deleteTodoApi, editTodoApi } from '@/services/todo/todo';
 import { logoutApiCall } from '@/services/user/user';
 

@@ -1,23 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isVaildTokenApi } from './services/auth/token';
+import { errorTokenHandler, getNewAccessToken } from './app/lib/token';
 
 export async function middleware(request: NextRequest) {
   let accessToken = request.cookies.get('accessToken')?.value;
   let refreshToken = request.cookies.get('refreshToken')?.value;
   let path = request.nextUrl.pathname;
-
-  if (path === '/api/todos') {
-    console.log('api 쿠키: ', request.headers);
-    // 쿠키가 없음
-    //   // const requestHeaders = new Headers(request.headers);
-    //   // requestHeaders.set('Authorization', `Bearer ${accessToken}`);
-    //   // const response = NextResponse.next({
-    //   //   request: {
-    //   //     headers: requestHeaders,
-    //   //   },
-    //   // });
-    //   // return response;
-  }
+  let response = NextResponse.redirect(request.url);
 
   // // 액세스 토큰이 있을 시 홈으로 못가게
   if (path === '/' || path === '/signup') {
@@ -29,25 +18,22 @@ export async function middleware(request: NextRequest) {
     if (!accessToken && !refreshToken)
       return NextResponse.redirect(new URL('/', request.url));
 
-    // const vaild = await isVaildTokenApi(accessToken);
-
     try {
-      const vaild = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/token/validateToken/`,
-        {
-          method: 'POST',
-          body: JSON.stringify({ token: `Bearer ${accessToken}` }),
-        }
-      )
-        .then(async (item) => {
-          return await item.json();
-        })
-        .then((item) => {
-          console.log(item);
-        });
+      console.log('미들웨어');
+      const accessVaildResult = await isVaildTokenApi(accessToken);
 
-      // const data = await vaild.json();
-      // console.log('미들웨어 밸리드:', vaild);
+      // 액세스 토큰 확인 401 일 시
+      if (accessVaildResult.status === 401) {
+        // console.log('액세스 401');
+        const refreshVaildResult = await isVaildTokenApi(refreshToken);
+        // 리프레시 토큰 401 일 시 ( 쿠키 삭제 )
+        if (refreshVaildResult.status === 401)
+          errorTokenHandler(response, request.url);
+
+        // 재발급
+        // return await refreshTokenApi();
+        return await getNewAccessToken(refreshVaildResult.userInfo, response);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -57,6 +43,6 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
-    '/api/todos/:path',
+    // '/api/todos/:path',
   ],
 };

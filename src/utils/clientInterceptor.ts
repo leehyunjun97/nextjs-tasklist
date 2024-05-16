@@ -42,7 +42,7 @@ clientInstance.interceptors.response.use(
       // 리프레시 토큰도 만료 되었을 떄
       if (!refreshToken) return;
 
-      const vaildResult = await isVaildTokenApi('Bearer ' + refreshToken);
+      const vaildResult = await isVaildTokenApi(refreshToken);
 
       // 재발급
       if (vaildResult.status === 201) {

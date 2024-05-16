@@ -8,7 +8,7 @@ export async function DELETE(
   { params }: { params: { slug: string } }
 ) {
   const token = request.headers.get('Authorization');
-  const vaildResult = await isVaildTokenApi(token);
+  const vaildResult = await isVaildTokenApi(token?.split(' ')[1]);
 
   if (!vaildResult.userInfo)
     return NextResponse.json(vaildResult.message, {
@@ -36,7 +36,7 @@ export async function POST(
   { params }: { params: { slug: string } }
 ) {
   const token = request.headers.get('Authorization');
-  const vaildResult = await isVaildTokenApi(token);
+  const vaildResult = await isVaildTokenApi(token?.split(' ')[1]);
 
   if (!vaildResult.userInfo)
     return NextResponse.json(vaildResult.message, {

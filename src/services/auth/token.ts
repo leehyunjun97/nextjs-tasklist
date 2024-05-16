@@ -1,16 +1,14 @@
-import axios from 'axios';
-
 export const isVaildTokenApi = async (token: string | null | undefined) => {
   try {
-    const result = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/token/validateToken`,
+    const result = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/token/validateToken/`,
       {
-        token,
+        method: 'post',
+        body: JSON.stringify({ token }),
       }
     );
-    console.log('result: ', result.data);
 
-    return result.data;
+    return await result.json();
   } catch (error) {
     // console.log(error);
   }
@@ -18,8 +16,9 @@ export const isVaildTokenApi = async (token: string | null | undefined) => {
 
 export const refreshTokenApi = async () => {
   try {
-    await axios.get(
+    await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/token/refreshToken`
     );
   } catch (error) {}
 };
+ 

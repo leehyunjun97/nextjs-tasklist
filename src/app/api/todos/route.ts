@@ -1,16 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/app/lib/prisma';
 import { isVaildTokenApi } from '@/services/auth/token';
-import { getAccessToken } from '@/app/lib/cookie';
-import { NextApiRequest } from 'next';
 
 // 모든 할일 가져오기
 export async function GET(request: NextRequest) {
   try {
-    // console.log('api');
-    // console.log('가져왔니?: ', request.headers);
-    const token = request.headers.get('authorization');
-    const vaildResult = await isVaildTokenApi(token);
+    const token = request.headers.get('Authorization');
+    const vaildResult = await isVaildTokenApi(token?.split(' ')[1]);
 
     if (!vaildResult.userInfo) {
       return NextResponse.json(vaildResult.message, {
@@ -44,7 +40,7 @@ export async function GET(request: NextRequest) {
 // 할일 추가
 export async function POST(request: NextRequest) {
   const token = request.headers.get('Authorization');
-  const vaildResult = await isVaildTokenApi(token);
+  const vaildResult = await isVaildTokenApi(token?.split(' ')[1]);
 
   if (!vaildResult.userInfo)
     return NextResponse.json(vaildResult.message, {

@@ -11,11 +11,13 @@ export function getCookieValue(cookieName: string) {
   });
 
   if (cookie) {
+    cookie = cookie.substring(name.length, cookie.length);
+
     if (cookie.charAt(0) === '=') {
       cookie = cookie.slice(1);
     }
 
-    return cookie.substring(name.length, cookie.length);
+    return cookie;
   }
   return null;
 }

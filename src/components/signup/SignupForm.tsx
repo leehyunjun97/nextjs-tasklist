@@ -8,6 +8,7 @@ import { User } from '@/types/user';
 import { signValidation } from '@/utils/checkValidate';
 import Link from 'next/link';
 import { emailCheckApi, signupApi } from '@/services/user/user';
+import { useRouter } from 'next/router';
 
 const SignupForm = () => {
   // 패스워드 type 변경 전용
@@ -24,6 +25,8 @@ const SignupForm = () => {
   const [emailError, setEmailError] = useState(' ');
   const [nameError, setNameError] = useState(' ');
   const [passwordError, setPasswordError] = useState(' ');
+
+  const router = useRouter();
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -64,6 +67,7 @@ const SignupForm = () => {
 
     try {
       await signupApi(signupState);
+      router.push('/todos');
     } catch (error) {
       console.log(error);
     }

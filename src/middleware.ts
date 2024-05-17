@@ -30,7 +30,6 @@ export async function middleware(request: NextRequest) {
           errorTokenHandler(response, request.url);
 
         // 재발급
-        // return await refreshTokenApi();
         return await getNewAccessToken(refreshVaildResult.userInfo, response);
       }
     } catch (error) {
@@ -40,8 +39,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
-    // '/api/todos/:path',
-  ],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };

@@ -19,7 +19,6 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/', request.url));
 
     try {
-      console.log('미들웨어');
       const accessVaildResult = await isVaildTokenApi(accessToken);
 
       // 액세스 토큰 확인 401 일 시

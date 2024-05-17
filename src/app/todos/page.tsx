@@ -7,7 +7,7 @@ const TodosPage = async () => {
 
   return (
     <div className='flex flex-col space-y-8'>
-      <h1 className='text-3xl'>Todos</h1>
+      <h1 className='text-3xl'>Task-list</h1>
 
       <TodosTable todos={response?.fetchedTodos ?? []} />
     </div>

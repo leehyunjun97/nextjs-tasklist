@@ -17,6 +17,7 @@
 3. ``/todos`` 페이지 이동 및 관련 api 호출 시 ``http header``에 토큰을 담아 전송
 4. ``token vaild 함수``를 통해 ``Authorization`` 체크
 5. 응답 받은 ``status``를 체크해 재발급 해줄 지 삭제할 지 결정
+<br />
 
 ## 사용법
 #### 1. git clone
@@ -37,8 +38,10 @@ npx prisma studio
 ```
 
 #### 4. localhost 접속 
-- 앱 페이지 3000
-- DB studio 5555
+```
+앱 페이지 3000
+DB studio 5555
+```
 
 #### 5. 로그인, 홈(/) 페이지, taskList(/todos) 페이지 사용
 

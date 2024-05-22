@@ -129,6 +129,7 @@ const TodosTable = ({ todos }: { todos: Todo[] }) => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
+                aria-label='Options'
                 onAction={(key: Key) => {
                   setCurrentModalData({
                     focusedTodo: todo,

@@ -17,7 +17,7 @@ export const setRefreshTokenCookie = (refreshToken: string) => {
     name: 'refreshToken',
     value: refreshToken,
     httpOnly: false,
-    maxAge: 60 * 60 * 24 * 7,
+    maxAge: 60 * 60 * 24,
     path: '/',
   });
 };

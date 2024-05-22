@@ -11,7 +11,7 @@ export const fetchTodosApiCall = async () => {
       throw new Error('No data found in res ponse');
     }
   } catch (error) {
-    // console.log(error);
+    console.log(error);
   }
 };
 

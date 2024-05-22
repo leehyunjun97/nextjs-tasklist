@@ -10,7 +10,7 @@ export const isVaildTokenApi = async (token: string | null | undefined) => {
 
     return await result.json();
   } catch (error) {
-    // console.log(error);
+    console.log(error);
   }
 };
 

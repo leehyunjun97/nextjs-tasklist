@@ -16,10 +16,6 @@ export const fetchUserInfoApi = async (accessToken: string) => {
     const data = await response.json();
 
     return data.data as User;
-
-    // const response = await privateInstance.get('/api/user');
-    // console.log('유저리스폰스: ', response);
-    // return response.data;
   } catch (error) {
     console.log(error);
   }
